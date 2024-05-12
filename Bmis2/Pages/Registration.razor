@@ -1,0 +1,313 @@
+﻿@page "/registration"
+@using Bmis2.Models
+@layout LoginLayout
+@inject ISnackbar Snackbar
+@using System.Net.Http.Headers
+@inject ILocalStorageService localStorage
+@inject NavigationManager Nav
+@using System.Net.Mail
+@inject IDialogService Dialog
+@inject IJSRuntime IJS
+@inject SweetAlertService Swal
+
+<PageTitle>Registration</PageTitle>
+
+<EditForm Model="@xres" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-sm-6">
+                <br />
+                <MudToolBar>
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Href="/" aria-label="delete"></MudIconButton>
+                </MudToolBar>
+                <MudText Align="Align.Center"><h5>Login Information</h5></MudText>
+                <MudCard>
+                    <MudCardContent>
+                        <p1>Email</p1>
+                        <MudTextField Clearable @bind-Value="@xres.email" For="@(() => xres.email)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Username</p1>
+                        <MudTextField Clearable @bind-Value="@xres.username" For="@(() => xres.username)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Password</p1>
+                        <MudTextField @bind-Value="@xres.password" For="@(() => xres.password)" Margin="Margin.Dense" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="Click" AdornmentAriaLabel="Show Password" />
+                        <br />
+                        <p1>Confirm Password</p1>
+                        <MudTextField @bind-Value="@xres.password2" For="@(() => xres.password2)" Margin="Margin.Dense" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="Click" AdornmentAriaLabel="Show Password" />
+                        <br />
+                    </MudCardContent>
+                </MudCard>
+            </div>
+            <div class="col-sm-6">
+                <br /><br /><br /><br />
+                <MudText Align="Align.Center"><h5>Personal Information</h5></MudText>
+                <MudCard>
+                    <MudCardContent>
+                        <p1>First Name</p1>
+                        <MudTextField Clearable @bind-Value="@xres.fname" For="@(() => xres.fname)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Middle Name</p1>
+                        <MudTextField Clearable @bind-Value="@xres.mname" HelperText="Leave blank if Not Applicable" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Last Name</p1>
+                        <MudTextField Clearable @bind-Value="@xres.lname" For="@(() => xres.lname)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Extension</p1>
+                        <MudTextField Clearable @bind-Value="@xres.ext" HelperText="Leave blank if Not Applicable" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Purok</p1>
+                        <MudTextField Clearable @bind-Value="@xres.purok" For="@(() => xres.purok)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Gender</p1>
+                        <MudSelect @bind-Value="@xres.gender" For="@(() => xres.gender)" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                            <MudSelectItem Value="@("Male")" />
+                            <MudSelectItem Value="@("Female")" />
+                        </MudSelect>
+                        <br />
+                        <p1>Birthdate</p1>
+                        <MudDatePicker Editable="true" Variant="Variant.Outlined" For="@(() => xres.bdate)" Margin="Margin.Dense" @bind-Date="xres.bdate" Placeholder="Select Date" />
+                        <br />
+                        <p1>Marital Status</p1>
+                        <MudSelect @bind-Value="@xres.status" For="@(() => xres.status)" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                            <MudSelectItem Value="@("Single")" />
+                            <MudSelectItem Value="@("Married")" />
+                            <MudSelectItem Value="@("Separated")" />
+                            <MudSelectItem Value="@("Widowed")" />
+                        </MudSelect>
+                        <br />
+                        <p1>Contact</p1>
+                        <MudTextField Clearable @bind-Value="@xres.contact" For="@(() => xres.contact)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <MudToolBar>
+                            <MudSpacer />
+                            <MudButton Disabled="@_processing" @onclick="Submit" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success">
+                                @if (_processing)
+                                {
+                                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                    <MudText Class="ms-2">Submitting</MudText>
+                                }
+                                else
+                                {
+                                    <MudText>Submit</MudText>
+                                }
+                            </MudButton>
+                        </MudToolBar>
+                    </MudCardContent>
+                </MudCard>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+<style>
+    body {
+        background-image: url('logo2.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+</style>
+
+@code {
+    [Parameter] public residents xres { get; set; } = new residents();
+    private string message { get; set; } = "";
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private bool _processing = false;
+    bool isShow;
+
+    private void OnValidSubmit(EditContext context)
+    {
+
+    }
+
+    public string randomNumbers = "";
+    private async Task GenerateRandomNumbers()
+    {
+        Random random = new Random();
+        int randomNumber = random.Next(1000, 10000);
+
+        randomNumbers = $"{randomNumber}";
+    }
+
+    public string resID = "";
+    private async Task GenerateRandomID()
+    {
+        resID = Guid.NewGuid().ToString();
+    }
+
+    async Task Submit()
+    {
+        _processing = true;
+        await CheckEmail();
+    }
+
+    public async Task Register()
+    {
+
+        if (xres.password != xres.password2)
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Password does not Match!",
+                    Icon = SweetAlertIcon.Warning,
+                });
+            _processing = false;
+        }
+
+      else if (string.IsNullOrEmpty(xres.username) &&
+      string.IsNullOrEmpty(xres.email) &&
+      string.IsNullOrEmpty(xres.fname) &&
+      string.IsNullOrEmpty(xres.mname) &&
+      string.IsNullOrEmpty(xres.lname) &&
+      string.IsNullOrEmpty(xres.purok) &&
+      string.IsNullOrEmpty(xres.gender) &&
+      string.IsNullOrEmpty(xres.status) &&
+      string.IsNullOrEmpty(xres.contact))
+
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Fill the Required Fields!",
+                    Icon = SweetAlertIcon.Warning,
+                });
+            _processing = false;
+
+
+        }
+        else
+        {
+            await GenerateRandomID();
+            await GenerateRandomNumbers();
+            await localStorage.SetItemAsStringAsync("randomNumbers", randomNumbers);
+            await localStorage.SetItemAsStringAsync("resID", resID);
+            await localStorage.SetItemAsStringAsync("username", xres.username);
+            await localStorage.SetItemAsStringAsync("password", xres.password);
+            await localStorage.SetItemAsStringAsync("email", xres.email);
+            await localStorage.SetItemAsStringAsync("fname", xres.fname);
+            await localStorage.SetItemAsStringAsync("mname", xres.mname);
+            await localStorage.SetItemAsStringAsync("lname", xres.lname);
+            await localStorage.SetItemAsStringAsync("ext", xres.ext);
+            await localStorage.SetItemAsStringAsync("gender", xres.gender);
+            await localStorage.SetItemAsStringAsync("bdate", xres.bdate.ToString());
+            await localStorage.SetItemAsStringAsync("status", xres.status);
+            await localStorage.SetItemAsStringAsync("contact", xres.contact);
+            await localStorage.SetItemAsStringAsync("purok", xres.purok);
+            await SendEmail();
+            _processing = false;
+            Nav.NavigateTo("/confirmation");
+
+        }
+
+    }
+
+    List<residents>? xresident;
+    async Task CheckEmail()
+    {
+
+        xresident = new List<residents>();
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"https://localhost:7242/");
+            HttpResponseMessage json = await client.GetAsync($"api/resident/CheckEmail?email={xres.email}");
+            if (json.IsSuccessStatusCode)
+            {
+                string jsonContent = await json.Content.ReadAsStringAsync();
+                List<residents> resList = JsonConvert.DeserializeObject<List<residents>>(jsonContent);
+
+                if (resList.Count > 0)
+                {
+                    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Title = "Email Already Exist",
+                            Icon = SweetAlertIcon.Error,
+                        });
+                    _processing = false;
+
+                }
+                else
+                {
+                    await CheckUser();
+                }
+            }
+        }
+    }
+
+    async Task CheckUser()
+    {
+
+        xresident = new List<residents>();
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"https://localhost:7242/");
+            HttpResponseMessage json = await client.GetAsync($"api/resident/CheckUser?username={xres.username}");
+            if (json.IsSuccessStatusCode)
+            {
+                string jsonContent = await json.Content.ReadAsStringAsync();
+                List<residents> resList = JsonConvert.DeserializeObject<List<residents>>(jsonContent);
+
+                if (resList.Count > 0)
+                {
+                    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Title = "Username Already Exist",
+                            Icon = SweetAlertIcon.Error,
+                        });
+                    _processing = false;
+
+                }
+                else
+                {
+                    await Register();
+                }
+            }
+        }
+    }
+
+    private async Task SendEmail()
+    {
+        try
+        {
+            var httpClient = new HttpClient();
+            var content = new FormUrlEncodedContent(new[]
+            {
+            new KeyValuePair<string, string>("toAddress", $"{xres.email}"),
+            new KeyValuePair<string, string>("subject", "Activation Code"),
+            new KeyValuePair<string, string>("body", $"{randomNumbers}")
+        });
+
+            var response = await httpClient.PostAsync($"https://localhost:7242/SendEmail", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                message = "Message Sent";
+            }
+            else
+            {
+                message = "Failed to send message";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"{ex.Message}";
+        }
+    }
+
+    void Click()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+}
+

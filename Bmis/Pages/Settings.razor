@@ -1,0 +1,518 @@
+﻿@page "/settings"
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject ISnackbar snackBar
+@inject IDialogService dialogService
+@using System.Net.Http.Headers
+@inject IDialogService Dialog
+@using Bmis.Models
+@using System.ComponentModel.DataAnnotations;
+
+<PageTitle>Users</PageTitle>
+
+@if (token != null)
+{
+    @if (role == "Admin")
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3">
+                    <br />
+                    <br />
+                    <EditForm Model="@xuser" OnValidSubmit="OnValidSubmit">
+                        <DataAnnotationsValidator />
+                        <MudContainer Style="max-height: 500px; overflow-y: scroll">
+                            <p1>Name</p1>
+                            <MudTextField Clearable @bind-Value="@xuser.name" For="@(() => xuser.name)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                            <p1>Username</p1>
+                            <MudTextField Clearable @bind-Value="@xuser.username" For="@(() => xuser.username)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                            <p1>Password</p1>
+                            <MudTextField Clearable @bind-Value="@xuser.password" For="@(() => xuser.password)" Variant="Variant.Outlined" Margin="Margin.Dense" InputType="InputType.Password"></MudTextField> <br />
+                            <p1>Confirm Password</p1>
+                            <MudTextField Clearable @bind-Value="@cpassword" For="@(() => cpassword)" Variant="Variant.Outlined" Margin="Margin.Dense" InputType="InputType.Password"></MudTextField> <br />
+                            <p1>Role</p1>
+                            <MudSelect @bind-Value="@xuser.role" For="@(() => xuser.role)" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                                <MudSelectItem Value="@("Admin")" />
+                                <MudSelectItem Value="@("Clerk")" />
+                            </MudSelect>
+                        </MudContainer>
+                        <MudToolBar>
+                            <MudSpacer />
+                            <MudButton @onclick="Clear">Clear</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" @onclick="CheckUser">Submit</MudButton>
+                        </MudToolBar>
+                    </EditForm>
+                </div>
+                <div class="col-sm-9">
+                    <MudToolBar>
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Info" @onclick="Refresh">Refresh</MudButton>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Secondary" OnClick="@Show">
+                            @((hide) ? "Hide Password" : "Show Password")
+                        </MudButton>
+                    </MudToolBar>
+                    @if (userList != null && userList.Any())
+                    {
+                        <MudTable Class="ma-5" Dense="true" Hover="true" Items="@userList" HorizontalScrollbar="true" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ? "500px" : "")">
+                            <HeaderContent>
+                                <MudTh>ID No.</MudTh>
+                                <MudTh>Name</MudTh>
+                                <MudTh>Username</MudTh>
+                                <MudTh>Password</MudTh>
+                                <MudTh>Role</MudTh>
+                                <MudTh colspan="3"></MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>@context.userID</MudTd>
+                                <MudTd>@context.name</MudTd>
+                                <MudTd>@context.username</MudTd>
+                                <MudTd>
+                                    @if (hide)
+                                    {
+                                        @context.password
+                                    }
+                                    else
+                                    {
+                                        <p1>********</p1>
+
+                                    }
+                                </MudTd>
+                                <MudTd>@context.role</MudTd>
+                                <MudTd>
+                                    <MudFab Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit" @onclick="(e => Edit(context.userID))" Size="Size.Small" />
+                                    <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Delete" @onclick="(e => Delete(context.userID))" Size="Size.Small" />
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    }
+                    else
+                    {
+                        <p>No Records Found</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-sm-3">
+                </div>
+                <div class="col-sm-6">
+                    <MudCard Elevation="1">
+                        <EditForm Model="@xuser" OnValidSubmit="OnValidSubmit">
+                            <DataAnnotationsValidator />
+                            <MudContainer Style="max-height: 500px;">
+                                <p1>ID No.</p1>
+                                <MudTextField Clearable @bind-Value="@_userID" For="@(() => _userID)" Disabled Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                                <p1>Name</p1>
+                                <MudTextField Clearable @bind-Value="@_name" For="@(() => _name)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                                <p1>Username</p1>
+                                <MudTextField Clearable @bind-Value="@_username" For="@(() => _username)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                                <p1>Password</p1>
+                                <MudTextField @bind-Value="@_password" For="@(() => _password)" Margin="Margin.Dense" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="Click" AdornmentAriaLabel="Show Password" />
+                            </MudContainer>
+                            <MudToolBar>
+                                <MudSpacer />
+                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="UsernameUpdateCheck">Update</MudButton>
+                            </MudToolBar>
+                        </EditForm>
+                    </MudCard>
+                </div>
+                <div class="col-sm-3">
+                </div>
+            </div>
+        </div>
+
+
+    }
+}
+else
+{
+    <style>
+
+        /*======================
+                                    404 page
+                                =======================*/
+
+
+        .page_404 {
+            padding: 40px 0;
+            background: #fff;
+            font-family: 'Arvo', serif;
+        }
+
+            .page_404 img {
+                width: 100%;
+            }
+
+        .four_zero_four_bg {
+            background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+            height: 400px;
+            background-position: center;
+        }
+
+
+            .four_zero_four_bg h1 {
+                font-size: 80px;
+            }
+
+            .four_zero_four_bg h3 {
+                font-size: 80px;
+            }
+
+        .link_404 {
+            color: #fff !important;
+            padding: 10px 20px;
+            background: #39ac31;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .contant_box_404 {
+            margin-top: -50px;
+        }
+    </style>
+    <center>
+        <section class="page_404">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 ">
+                        <div class="col-sm-10 col-sm-offset-1  text-center">
+                            <div class="four_zero_four_bg">
+                                <h1 class="text-center ">404</h1>
+
+
+                            </div>
+
+                            <div class="contant_box_404">
+                                <h3 class="h2">
+                                    Look like you're lost
+                                </h3>
+
+                                <p>the page you are looking for not avaible!</p>
+
+                                <a href="" class="link_404">Go to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </center>
+}
+
+
+@code {
+    private string txtsearch { get; set; } = "";
+    users[]? userList;
+    [Parameter] public users xuser { get; set; } = new users();
+    bool fixed_header = true;
+    bool fixed_footer = false;
+    private string search { get; set; } = "";
+    private bool hide = false;
+    public bool AlarmOn { get; set; }
+    public string role = "";
+    DateTime? dateNow = DateTime.Today;
+    [Required]
+    public string cpassword { get; set; } = "";
+    public string _username = "";
+    public string _userID = "";
+    public string _password = "";
+    public string _name = "";
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    bool isShow;
+    List<users>? xusers;
+    public string token = "";
+
+    async Task CheckUser()
+    {
+        xusers = new List<users>();
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"https://localhost:7242/");
+            HttpResponseMessage json = await client.GetAsync($"api/User/UsernameCheck?username={xuser.username}");
+            if (json.IsSuccessStatusCode)
+            {
+                string jsonContent = await json.Content.ReadAsStringAsync();
+                List<users> resList = JsonConvert.DeserializeObject<List<users>>(jsonContent);
+
+                if (resList.Count > 0)
+                {
+                    snackBar.Add($"Username Already Exist", Severity.Warning);
+                    StateHasChanged();
+                }
+                else
+                {
+                    await Submit();
+                }
+            }
+        }
+    }
+
+    async Task UsernameUpdateCheck()
+    {
+        xusers = new List<users>();
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"https://localhost:7242/");
+            HttpResponseMessage json = await client.GetAsync($"api/User/UsernameCheck?username={_username}");
+            if (json.IsSuccessStatusCode)
+            {
+                string jsonContent = await json.Content.ReadAsStringAsync();
+                List<users> resList = JsonConvert.DeserializeObject<List<users>>(jsonContent);
+
+                if (resList.Count > 0)
+                {
+                    snackBar.Add($"Username Already Exist", Severity.Warning);
+                    StateHasChanged();
+                }
+                else
+                {
+                    await Update();
+                }
+            }
+        }
+    }
+
+    void Click()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            token = await localStorage.GetItemAsStringAsync("token");
+            role = await localStorage.GetItemAsStringAsync("role");
+            _username = await localStorage.GetItemAsStringAsync("username");
+            _userID = await localStorage.GetItemAsStringAsync("userID");
+            _password = await localStorage.GetItemAsStringAsync("password");
+            _name = await localStorage.GetItemAsStringAsync("name");
+            await loadUsers();
+            StateHasChanged();
+        }
+    }
+
+    public void OnValidSubmit(EditContext context)
+    {
+
+    }
+
+    public async Task Clear()
+    {
+        xuser.name = "";
+        xuser.username = "";
+        xuser.password = "";
+        cpassword = "";
+        xuser.role = "";
+    }
+
+    private void Show()
+    {
+        hide = !hide;
+    }
+
+    private async Task loadUsers()
+    {
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                await localStorage.GetItemAsStringAsync("token"));
+                HttpResponseMessage response = await client.GetAsync($"api/User/Users");
+                if (response.IsSuccessStatusCode)
+                {
+                    string contentrespose = await response.Content.ReadAsStringAsync();
+                    userList = JsonConvert.DeserializeObject<users[]>(contentrespose);
+                    StateHasChanged();
+                }
+                else
+                {
+                    snackBar.Add($"{response.StatusCode}", Severity.Warning);
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+        //
+        }
+    }
+
+    private async Task Refresh()
+    {
+        await loadUsers();
+    }
+
+
+    private async Task Edit(string id)
+    {
+        var parameters = new DialogParameters();
+        var update = userList.FirstOrDefault(_ => _.userID == id);
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        parameters.Add("xuser", update);
+        var dialog = await Dialog.Show<UpdateUsers>("Update Users", parameters, options).Result;
+    }
+
+
+    private async Task Edit2()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, Position = DialogPosition.Center };
+        var dialog = Dialog.Show<UpdateUsers>("Update Users", parameters, options);
+        var result = await dialog.Result;
+    }
+
+    private async Task Delete(string id)
+    {
+        var parameters = new DialogParameters();
+        var update = userList.FirstOrDefault(_ => _.userID == id);
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        parameters.Add("xuser", update);
+        var dialog = await Dialog.Show<DeleteUsers>("Delete Users", parameters, options).Result;
+    }
+
+    private async Task Update()
+    {
+        if (string.IsNullOrEmpty(_name) &&
+        string.IsNullOrEmpty(_username) &&
+        string.IsNullOrEmpty(_password))
+        {
+            snackBar.Add($"Fill The Required Fields!", Severity.Warning);
+        }
+        else
+        {
+            int i = 0;
+            try
+            {
+                var u = new users
+                    {
+                        userID = _userID,
+                        name = _name,
+                        username = _username,
+                        password = _password,
+                        role = role
+                    };
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                    var json = JsonConvert.SerializeObject(u);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PutAsync($"api/User/UpdateUsers", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                snackBar.Add($"Done: Successfully Updated!", Severity.Success);
+                                await InvokeAsync(StateHasChanged);
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(() =>
+                        {
+                            snackBar.Add($"Warning: {response.ReasonPhrase}", Severity.Warning);
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+    }
+    private async Task Submit()
+    {
+        if (string.IsNullOrEmpty(xuser.name) &&
+         string.IsNullOrEmpty(xuser.username) &&
+         string.IsNullOrEmpty(xuser.password) &&
+         string.IsNullOrEmpty(xuser.role))
+        {
+            snackBar.Add($"Fill The Required Fields!", Severity.Warning);
+        }
+        else if (cpassword != xuser.password)
+        {
+            snackBar.Add($"Password Does Not Match!", Severity.Warning);
+        }
+        else
+        {
+            int i = 0;
+            try
+            {
+                var u = new users
+                    {
+                        userID = Guid.NewGuid().ToString(),
+                        name = xuser.name,
+                        username = xuser.username,
+                        password = xuser.password,
+                        role = xuser.role
+                    };
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                    var json = JsonConvert.SerializeObject(u);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PostAsync($"api/User/AddUsers", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                snackBar.Add($"Done: Successfully Saved!", Severity.Success);
+                                await InvokeAsync(StateHasChanged);
+                                await Clear();
+                                await loadUsers();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(() =>
+                        {
+                            snackBar.Add($"Warning: {response.ReasonPhrase}", Severity.Warning);
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+    }
+}

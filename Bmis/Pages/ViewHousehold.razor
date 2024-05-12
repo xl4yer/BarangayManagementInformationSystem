@@ -1,0 +1,107 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Net.Http.Headers
+@using Newtonsoft.Json;
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
+@inject ISnackbar snackBar
+@inject HttpClient http
+@using Bmis.Models
+
+
+<MudDialog TitleClass="mud-primary" DisableSidePadding="true">
+    <TitleContent>
+        <MudText Typo="Typo.h6" Style="color:white">
+            Household Members
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudToolBar>
+            <p1>Household No.:</p1>&nbsp;<h5>@xhousehold.houseID</h5>
+        </MudToolBar>
+                <MudContainer Style="max-height: 500px; overflow-y: scroll">
+            @if (householdList != null && householdList.Any())
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (householdList == null)
+                        {
+                            <p>Loading.....</p>
+                        }
+                        else
+                        {
+                            foreach (var item in householdList)
+                            {
+                                <tr>
+                                    <td>@item.fullname</td>
+                                    <td>@item.age</td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No Records Found</p>
+            }
+            </MudContainer>
+    </DialogContent>
+</MudDialog>
+
+@code{
+    bool fixed_header = true;
+    bool fixed_footer = false;
+    [Parameter] public household xhousehold { get; set; } = new household();
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    household[]? householdList;
+    [Parameter] public string id { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await loadHousehold();
+        }
+    }
+
+    private async Task loadHousehold()
+    {
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                client.DefaultRequestHeaders.Authorization = new
+                AuthenticationHeaderValue("Bearer", await
+                localStorage.GetItemAsStringAsync("token"));
+                HttpResponseMessage response = await client.GetAsync($"api/Household/HouseID?houseID={xhousehold.houseID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string contentrespose = await response.Content.ReadAsStringAsync();
+                    householdList = JsonConvert.DeserializeObject<household[]>(contentrespose);
+                    StateHasChanged();
+                }
+                else
+                {
+                    snackBar.Add($"Warning: {response.StatusCode}", Severity.Warning);
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //
+        }
+    }
+
+}

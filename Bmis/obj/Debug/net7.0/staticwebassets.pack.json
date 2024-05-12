@@ -1,0 +1,141 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\obj\\Debug\\net7.0\\scopedcss\\projectbundle\\Bmis.bundle.scp.css",
+      "PackagePath": "staticwebassets\\Bmis.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\Picture1.png",
+      "PackagePath": "staticwebassets\\Picture1.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\Picture2.png",
+      "PackagePath": "staticwebassets\\Picture2.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\Picture3.png",
+      "PackagePath": "staticwebassets\\Picture3.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\bg.jpg",
+      "PackagePath": "staticwebassets\\bg.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\bw.png",
+      "PackagePath": "staticwebassets\\bw.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\bw2.png",
+      "PackagePath": "staticwebassets\\bw2.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
+      "PackagePath": "staticwebassets\\css\\open-iconic"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\ICON-LICENSE",
+      "PackagePath": "staticwebassets\\css\\open-iconic"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\README.md",
+      "PackagePath": "staticwebassets\\css\\open-iconic\\README.md"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.eot",
+      "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.eot"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.otf",
+      "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.otf"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.svg",
+      "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.svg"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.ttf",
+      "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.ttf"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.woff",
+      "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.woff"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\finger.png",
+      "PackagePath": "staticwebassets\\finger.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\logo.png",
+      "PackagePath": "staticwebassets\\logo.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\logo2.png",
+      "PackagePath": "staticwebassets\\logo2.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\maxresdefault.jpg",
+      "PackagePath": "staticwebassets\\maxresdefault.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\opacity.png",
+      "PackagePath": "staticwebassets\\opacity.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\picture34.png",
+      "PackagePath": "staticwebassets\\picture34.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\print.js",
+      "PackagePath": "staticwebassets\\print.js"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\sig1.png",
+      "PackagePath": "staticwebassets\\sig1.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\sig2.png",
+      "PackagePath": "staticwebassets\\sig2.png"
+    },
+    {
+      "Id": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\wwwroot\\uc.png",
+      "PackagePath": "staticwebassets\\uc.png"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.Bmis.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.Bmis.props",
+      "PackagePath": "build\\Bmis.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.Bmis.props",
+      "PackagePath": "buildMultiTargeting\\Bmis.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildTransitive.Bmis.props",
+      "PackagePath": "buildTransitive\\Bmis.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

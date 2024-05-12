@@ -1,0 +1,372 @@
+﻿@page "/residents"
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject ISnackbar snackBar
+@inject IDialogService dialogService
+@using System.Net.Http.Headers
+@inject IDialogService Dialog
+@using Bmis.Models
+
+<PageTitle>Residents Record</PageTitle>
+
+@if (token != null)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <EditForm Model="@xres" OnValidSubmit="OnValidSubmit">
+                    <DataAnnotationsValidator />
+                    <MudContainer Style="max-height: 500px; overflow-y: scroll">
+                        <br />
+                        <p1>Household No.</p1>
+                        <MudTextField Clearable @bind-Value="@xres.houseID" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                        <p1>First Name</p1>
+                        <MudTextField Clearable @bind-Value="@xres.fname" For="@(() => xres.fname)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                        <p1>Middle Name</p1>
+                        <MudTextField Clearable @bind-Value="@xres.mname" HelperText="Leave blank if Not Applicable" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <p1>Last Name</p1>
+                        <MudTextField Clearable @bind-Value="@xres.lname" For="@(() => xres.lname)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField><br />
+                        <p1>Extension</p1>
+                        <MudTextField Clearable @bind-Value="@xres.ext" HelperText="Leave blank if Not Applicable" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+                        <p1>Purok</p1>
+                        <MudTextField Clearable @bind-Value="@xres.purok" For="@(() => xres.purok)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField><br />
+                        <p1>Gender</p1>
+                        <MudSelect @bind-Value="@xres.gender" Margin="Margin.Dense" For="@(() => xres.gender)" T="string" Variant="Variant.Outlined">
+                            <MudSelectItem Value="@("Male")" />
+                            <MudSelectItem Value="@("Female")" />
+                        </MudSelect><br />
+                        <p1>Birthdate</p1>
+                        <MudDatePicker Editable="true" Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Date="birthdate" Placeholder="Select Date" /><br />
+                        <p1>Marital Status</p1>
+                        <MudSelect @bind-Value="@xres.status" For="@(() => xres.status)" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                            <MudSelectItem Value="@("Single")" />
+                            <MudSelectItem Value="@("Married")" />
+                            <MudSelectItem Value="@("Separated")" />
+                            <MudSelectItem Value="@("Widowed")" />
+                        </MudSelect><br />
+                        <p1>Contact No.</p1>
+                        <MudTextField Clearable @bind-Value="@xres.contact" For="@(() => xres.contact)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                    </MudContainer>
+                    <MudToolBar>
+                        <MudSpacer />
+                        <MudButton @onclick="Clear">Clear</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" @onclick="Submit">Submit</MudButton>
+                    </MudToolBar>
+                </EditForm>
+            </div>
+            <div class="col-sm-9">
+                <MudToolBar>
+                    <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Info" @onclick="Refresh">Refresh</MudButton>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="txtsearch" Clearable TextChanged="Search" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary" Placeholder="Search" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudToolBar>
+                @if (residentList != null && residentList.Any())
+                {
+                    <MudTable Class="ma-5" Dense="true" Hover="true" Items="@residentList" HorizontalScrollbar="true" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ? "500px" : "")">
+                        <HeaderContent>
+                            <MudTh>ID No.</MudTh>
+                            <MudTh>Name</MudTh>
+                            <MudTh>Purok</MudTh>
+                            <MudTh>Age</MudTh>
+                            <MudTh>Contact</MudTh>
+                            <MudTh colspan="3"></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="ID No.">@context.resID</MudTd>
+                            <MudTd DataLabel="Name">@context.fullname</MudTd>
+                            <MudTd DataLabel="Purok">@context.purok</MudTd>
+                            <MudTd DataLabel="Age">@context.age</MudTd>
+                            <MudTd DataLabel="Contact">@context.contact</MudTd>
+                            <MudTd>
+                                <MudFab Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit" @onclick="(e => Edit(context.resID))" Size="Size.Small" />
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                }
+
+                else
+                {
+                    <p>No Records Found</p>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <style>
+
+        /*======================
+                                    404 page
+                                =======================*/
+
+
+        .page_404 {
+            padding: 40px 0;
+            background: #fff;
+            font-family: 'Arvo', serif;
+        }
+
+            .page_404 img {
+                width: 100%;
+            }
+
+        .four_zero_four_bg {
+            background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+            height: 400px;
+            background-position: center;
+        }
+
+
+            .four_zero_four_bg h1 {
+                font-size: 80px;
+            }
+
+            .four_zero_four_bg h3 {
+                font-size: 80px;
+            }
+
+        .link_404 {
+            color: #fff !important;
+            padding: 10px 20px;
+            background: #39ac31;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .contant_box_404 {
+            margin-top: -50px;
+        }
+    </style>
+    <center>
+        <section class="page_404">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 ">
+                        <div class="col-sm-10 col-sm-offset-1  text-center">
+                            <div class="four_zero_four_bg">
+                                <h1 class="text-center ">404</h1>
+
+
+                            </div>
+
+                            <div class="contant_box_404">
+                                <h3 class="h2">
+                                    Look like you're lost
+                                </h3>
+
+                                <p>the page you are looking for not avaible!</p>
+
+                                <a href="" class="link_404">Go to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </center>
+}
+
+
+
+
+
+@code {
+    residents[]? residentList;
+    bool fixed_header = true;
+    bool fixed_footer = false;
+    private string txtsearch { get; set; } = "";
+    public string token = "";
+
+    void Clear()
+    {
+        xres.houseID = "";
+        xres.fname = "";
+        xres.mname = "";
+        xres.lname = "";
+        xres.ext = "";
+        xres.purok = "";
+        xres.gender = "";
+        xres.bdate = DateTime.Now;
+        xres.status = "";
+        xres.contact = "";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            token = await localStorage.GetItemAsStringAsync("token");
+            await loadResidents();
+        }
+    }
+
+    public void OnValidSubmit(EditContext context)
+    {
+
+    }
+
+    private async Task loadResidents()
+    {
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                await localStorage.GetItemAsStringAsync("token"));
+                HttpResponseMessage response = await client.GetAsync($"api/resident/residents");
+                if (response.IsSuccessStatusCode)
+                {
+                    string contentrespose = await response.Content.ReadAsStringAsync();
+                    residentList = JsonConvert.DeserializeObject<residents[]>(contentrespose);
+                    StateHasChanged();
+                }
+                else
+                {
+                    Nav.NavigateTo("/404");
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //
+        }
+    }
+
+    private async Task Refresh()
+    {
+        await loadResidents();
+    }
+
+    private async Task Add()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("xres", new residents());
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small };
+        var dialog = await Dialog.Show<AddResident>("Add Resident", parameters, options).Result;
+    }
+
+    private async Task Edit(string id)
+    {
+        var parameters = new DialogParameters();
+        var update = residentList.FirstOrDefault(_ => _.resID == id);
+        parameters.Add("xres", update);
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small };
+        var dialog = await Dialog.Show<UpdateResident>("Update Resident", parameters, options).Result;
+    }
+
+    public async Task Search()
+    {
+       try
+        {
+            if (string.IsNullOrWhiteSpace(txtsearch))
+            {
+                StateHasChanged();
+                return;
+            }
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                await localStorage.GetItemAsStringAsync("token"));
+                HttpResponseMessage response = await client.GetAsync($"api/resident/searchresident?search={txtsearch}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string contentrespose = await response.Content.ReadAsStringAsync();
+                    residentList = JsonConvert.DeserializeObject<residents[]>(contentrespose);
+                    StateHasChanged();
+                }
+                else
+                {
+                    snackBar.Add($"Warning: {response.StatusCode}", Severity.Warning);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            
+           
+        }
+
+    }
+
+    bool hide = false;
+    [Parameter] public residents xres { get; set; } = new residents();
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    DateTime? birthdate = DateTime.Today;
+
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrEmpty(xres.fname) &&
+          string.IsNullOrEmpty(xres.lname) &&
+          string.IsNullOrEmpty(xres.purok) &&
+          string.IsNullOrEmpty(xres.gender) &&
+          string.IsNullOrEmpty(xres.status) &&
+          string.IsNullOrEmpty(xres.contact))
+        {
+            snackBar.Add($"Fill The Required Fields!", Severity.Warning);
+        }
+        else
+        {
+            int i = 0;
+            try
+            {
+                var res = new residents
+                    {
+                        resID = Guid.NewGuid().ToString(),
+                        houseID = xres.houseID,
+                        fname = xres.fname,
+                        mname = xres.mname,
+                        lname = xres.lname,
+                        ext = xres.ext,
+                        gender = xres.gender,
+                        bdate = birthdate.Value,
+                        status = xres.status,
+                        contact = xres.contact,
+                        purok = xres.purok
+                    };
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                    var json = JsonConvert.SerializeObject(res);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PostAsync($"api/resident/addresident", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                snackBar.Add($"Done: Successfully Saved!", Severity.Success);
+                                await InvokeAsync(StateHasChanged);
+                                await loadResidents();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(() =>
+                        {
+                            snackBar.Add($"Warning: {response.ReasonPhrase}", Severity.Warning);
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+       
+    }
+}

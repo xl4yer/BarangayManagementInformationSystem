@@ -1,0 +1,345 @@
+﻿@page "/household"
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject ISnackbar snackBar
+@inject IDialogService dialogService
+@using System.Net.Http.Headers
+@inject IDialogService Dialog
+@using Bmis.Models
+
+<PageTitle>Household Record</PageTitle>
+
+@if (token != null)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <br /><br />
+                <EditForm Model="@xhousehold" OnValidSubmit="OnValidSubmit">
+                    <DataAnnotationsValidator />
+                    <MudContainer Style="max-height: 500px; overflow-y: scroll">
+                        <p1>Household No.</p1>
+                        <MudTextField @bind-Value="@xhousehold.houseID" For="@(() => xhousehold.houseID)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField><br />
+                        <p1>Household Head Name</p1>
+                        <MudTextField @bind-Value="@xhousehold.head" For="@(() => xhousehold.head)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField><br />
+                        <p1>Purok</p1>
+                        <MudTextField @bind-Value="@xhousehold.purok" Lines="3" For="@(() => xhousehold.purok)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                    </MudContainer>
+
+                    <MudToolBar>
+                        <MudSpacer />
+                        <MudButton @onclick="Clear">Clear</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" @onclick="Submit">Submit</MudButton>
+                    </MudToolBar>
+                </EditForm>
+            </div>
+            <div class="col-sm-9">
+                <MudToolBar>
+                    <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Info" @onclick="Refresh">Refresh</MudButton>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="txtsearch" Clearable TextChanged="Search" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary" Placeholder="Search" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudToolBar>
+                @if (householdList != null && householdList.Any())
+                {
+                    <MudTable Class="ma-5" Dense="true" Hover="true" Items="@householdList" HorizontalScrollbar="true" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ? "500px" : "")">
+                        <HeaderContent>
+                            <MudTh>Household No.</MudTh>
+                            <MudTh>Purok</MudTh>
+                            <MudTh>Household Head</MudTh>
+                            <MudTh></MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Household No.">@context.houseID</MudTd>
+                            <MudTd DataLabel="Purok">@context.purok</MudTd>
+                            <MudTd DataLabel="Household Head">@context.head</MudTd>
+                            <MudTd>
+                                <MudFab Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit" @onclick="(e => Edit(context.houseID))" Size="Size.Small" />
+                                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.List" @onclick="(e => View(context.houseID))" Size="Size.Small" />
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                }
+                else
+                {
+                    <p>No Records Found</p>
+                }
+            </div>
+        </div>
+    </div>
+
+}
+else
+{
+    <style>
+
+        /*======================
+                                    404 page
+                                =======================*/
+
+
+        .page_404 {
+            padding: 40px 0;
+            background: #fff;
+            font-family: 'Arvo', serif;
+        }
+
+            .page_404 img {
+                width: 100%;
+            }
+
+        .four_zero_four_bg {
+            background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+            height: 400px;
+            background-position: center;
+        }
+
+
+            .four_zero_four_bg h1 {
+                font-size: 80px;
+            }
+
+            .four_zero_four_bg h3 {
+                font-size: 80px;
+            }
+
+        .link_404 {
+            color: #fff !important;
+            padding: 10px 20px;
+            background: #39ac31;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .contant_box_404 {
+            margin-top: -50px;
+        }
+    </style>
+    <center>
+        <section class="page_404">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 ">
+                        <div class="col-sm-10 col-sm-offset-1  text-center">
+                            <div class="four_zero_four_bg">
+                                <h1 class="text-center ">404</h1>
+
+
+                            </div>
+
+                            <div class="contant_box_404">
+                                <h3 class="h2">
+                                    Look like you're lost
+                                </h3>
+
+                                <p>the page you are looking for not avaible!</p>
+
+                                <a href="" class="link_404">Go to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </center>
+}
+
+
+
+@code {
+    household[]? householdList;
+    bool fixed_header = true;
+    bool fixed_footer = false;
+    private string txtsearch { get; set; } = "";
+    public string token = "";
+
+    void Clear()
+    {
+        xhousehold.houseID = "";
+        xhousehold.head = "";
+        xhousehold.purok = "";
+
+    }
+
+    public void OnValidSubmit(EditContext context)
+    {
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            token = await localStorage.GetItemAsStringAsync("token");
+            await loadHousehold();
+        }
+    }
+
+    private async Task loadHousehold()
+    {
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                await localStorage.GetItemAsStringAsync("token"));
+                HttpResponseMessage response = await client.GetAsync($"api/household/household");
+                if (response.IsSuccessStatusCode)
+                {
+                    string contentrespose = await response.Content.ReadAsStringAsync();
+                    householdList = JsonConvert.DeserializeObject<household[]>(contentrespose);
+                    StateHasChanged();
+                }
+                else
+                {
+                    Nav.NavigateTo("/404");
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //
+        }
+    }
+
+    private async Task Refresh()
+    {
+        await loadHousehold();
+    }
+
+    private async Task Add()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("xhousehold", new household());
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        var dialog = Dialog.Show<AddHousehold>("Add Household", parameters, options).Result;
+    }
+
+    private async Task Edit(string id)
+    {
+        var parameters = new DialogParameters();
+        var update = householdList.FirstOrDefault(_ => _.houseID == id);
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        parameters.Add("xhousehold", update);
+        var dialog = await Dialog.Show<UpdateHousehold>("Update Household", parameters, options).Result;
+    }
+
+    private async Task View(string id)
+    {
+        var parameters = new DialogParameters();
+        var update = householdList.FirstOrDefault(_ => _.houseID == id);
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small };
+        parameters.Add("xhousehold", update);
+        var dialog = await Dialog.Show<ViewHousehold>("Household Members", parameters, options).Result;
+    }
+
+    public async Task Search()
+    {
+        if (string.IsNullOrWhiteSpace(txtsearch))
+        {
+            StateHasChanged();
+            return;
+        }
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"{Nav.BaseUri}");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+            await localStorage.GetItemAsStringAsync("token"));
+            HttpResponseMessage response = await client.GetAsync($"api/household/searchhousehold?search={txtsearch}");
+            if (response.IsSuccessStatusCode)
+            {
+                string contentrespose = await response.Content.ReadAsStringAsync();
+                householdList = JsonConvert.DeserializeObject<household[]>(contentrespose);
+                StateHasChanged();
+            }
+            else
+            {
+                snackBar.Add($"Warning: {response.StatusCode}", Severity.Warning);
+            }
+        }
+    }
+
+
+    [Parameter] public household xhousehold { get; set; } = new household();
+    private static int counter = 1;
+    private static string lastId = "";
+
+    private string id()
+    {
+        string prefix = "";
+
+        if (string.IsNullOrEmpty(lastId))
+        {
+            lastId = prefix + counter.ToString().PadLeft(6, '0');
+            counter++;
+        }
+
+        string id = lastId;
+        lastId = prefix + counter.ToString().PadLeft(6, '0');
+        counter++;
+
+        return id;
+    }
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrEmpty(xhousehold.houseID) &&
+          string.IsNullOrEmpty(xhousehold.head) &&
+          string.IsNullOrEmpty(xhousehold.purok))
+        {
+            snackBar.Add($"Fill The Required Fields!", Severity.Warning);
+        }
+        else
+        {
+            int i = 0;
+            try
+            {
+                var h = new household
+                    {
+                        houseID = xhousehold.houseID,
+                        head = xhousehold.head,
+                        purok = xhousehold.purok
+                    };
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                    var json = JsonConvert.SerializeObject(h);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PostAsync($"api/household/addhousehold", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                snackBar.Add($"Done: Successfully Saved!", Severity.Success);
+                                await InvokeAsync(StateHasChanged);
+                                await loadHousehold();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(() =>
+                        {
+                            snackBar.Add($"Warning: {response.ReasonPhrase}", Severity.Warning);
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        
+    }
+}

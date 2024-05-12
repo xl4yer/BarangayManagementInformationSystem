@@ -1,0 +1,266 @@
+﻿@page "/dashboard"
+@using Bmis.Models
+@inject NavigationManager Nav
+@using System.Net.Http.Headers
+@inject ILocalStorageService localStorage
+@inject ISnackbar snackBar
+
+<PageTitle>Dashboard</PageTitle>
+
+
+@if (token != null)
+{
+    <MudCard Elevation="3">
+        <MudCardContent>
+            <MudGrid Class="mb-3">
+                <MudItem xs="6" sm="6" md="6">
+                    <MudPaper Class="pa-4 rounded-lg" Elevation="3">
+                        <MudGrid>
+                            <MudItem>
+                                <MudIcon Style="@($"color:{Colors.Red.Accent3};font-size:3rem;")" Icon="@Icons.Material.Outlined.People" />
+                            </MudItem>
+                            <MudItem>
+                                <MudText Typo="Typo.h4"><b>@countResidents</b></MudText>
+                                <MudText Typo="Typo.subtitle1">Population</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="6" sm="6" md="6">
+                    <MudPaper Class="pa-4 rounded-lg" Elevation="3">
+                        <MudGrid>
+                            <MudItem>
+                                <MudIcon Color="Color.Info" Style="font-size:3rem;" Icon="@Icons.Material.Outlined.House" />
+                            </MudItem>
+                            <MudItem>
+                                <MudText Typo="Typo.h4"><b></b>@countHousehold</MudText>
+                                <MudText Typo="Typo.subtitle1">Household</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <MudPaper Class="pa-4 rounded-lg" Elevation="3">
+                        <MudGrid>
+                            <MudItem>
+                                <MudIcon Color="Color.Tertiary" Style="font-size:3rem;" Icon="@Icons.Material.Outlined.Male" />
+                            </MudItem>
+                            <MudItem>
+                                <MudText Typo="Typo.h4"><b></b>@countMale</MudText>
+                                <MudText Typo="Typo.subtitle1">Male</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                    <br />
+                    <MudPaper Class="pa-4 rounded-lg" Elevation="3">
+                        <MudGrid>
+                            <MudItem>
+                                <MudIcon Color="Color.Secondary" Style="font-size:3rem;" Icon="@Icons.Material.Outlined.Female" />
+                            </MudItem>
+                            <MudItem>
+                                <MudText Typo="Typo.h4"><b></b>@countFemale</MudText>
+                                <MudText Typo="Typo.subtitle1">Female</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+                </div>
+                <div class="col-md-6">
+                    <MudPaper Class="pa-4" Elevation="3">
+                        <MudChart ChartType="ChartType.Pie" InputData="@data" @bind-SelectedIndex="Index" InputLabels="@labels" Width="300px" Height="300px" />
+                    </MudPaper>
+
+                </div>
+            </div>
+        </MudCardContent>
+    </MudCard>
+}
+else
+{
+    <style>
+
+        /*======================
+                            404 page
+                        =======================*/
+
+
+        .page_404 {
+            padding: 40px 0;
+            background: #fff;
+            font-family: 'Arvo', serif;
+        }
+
+            .page_404 img {
+                width: 100%;
+            }
+
+        .four_zero_four_bg {
+            background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+            height: 400px;
+            background-position: center;
+        }
+
+
+            .four_zero_four_bg h1 {
+                font-size: 80px;
+            }
+
+            .four_zero_four_bg h3 {
+                font-size: 80px;
+            }
+
+        .link_404 {
+            color: #fff !important;
+            padding: 10px 20px;
+            background: #39ac31;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .contant_box_404 {
+            margin-top: -50px;
+        }
+    </style>
+    <center>
+        <section class="page_404">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 ">
+                        <div class="col-sm-10 col-sm-offset-1  text-center">
+                            <div class="four_zero_four_bg">
+                                <h1 class="text-center ">404</h1>
+
+
+                            </div>
+
+                            <div class="contant_box_404">
+                                <h3 class="h2">
+                                    Look like you're lost
+                                </h3>
+
+                                <p>the page you are looking for not avaible!</p>
+
+                                <a href="" class="link_404">Go to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </center>
+}
+
+    
+
+
+
+
+    @code
+{
+    residents[]? residentList;
+    household[]? householdList;
+    public int countResidents { get; set; } = 0;
+    public int countHousehold { get; set; } = 0;
+    public int countMale { get; set; } = 0;
+    public int countFemale { get; set; } = 0;
+    public string token = "";
+
+    private int Index = -1;
+    int dataSize = 4;
+    double[] data;
+    string[] labels = { "Population", "Household", "Male", "Female" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        data = new double[dataSize];
+        await UpdateChartData();
+
+    }
+
+    private async Task UpdateChartData()
+    {
+        data = new double[] { countResidents, countHousehold, countMale, countFemale };
+    }
+
+    public async Task totalResidents()
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"{Nav.BaseUri}");
+            HttpResponseMessage response = await client.GetAsync($"api/resident/CountResidents");
+            if (response.IsSuccessStatusCode)
+            {
+                string contentResponse = await response.Content.ReadAsStringAsync();
+                countResidents = JsonConvert.DeserializeObject<int>(contentResponse);
+                StateHasChanged();
+            }
+        }
+    }
+
+    public async Task totalHousehold()
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"{Nav.BaseUri}");
+            HttpResponseMessage response = await client.GetAsync($"api/household/CountHousehold");
+            if (response.IsSuccessStatusCode)
+            {
+                string contentResponse = await response.Content.ReadAsStringAsync();
+                countHousehold = JsonConvert.DeserializeObject<int>(contentResponse);
+                StateHasChanged();
+            }
+        }
+    }
+
+    public async Task totalMale()
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"{Nav.BaseUri}");
+            HttpResponseMessage response = await client.GetAsync($"api/resident/CountMale");
+            if (response.IsSuccessStatusCode)
+            {
+                string contentResponse = await response.Content.ReadAsStringAsync();
+                countMale = JsonConvert.DeserializeObject<int>(contentResponse);
+                StateHasChanged();
+            }
+        }
+    }
+
+    public async Task totalFemale()
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"{Nav.BaseUri}");
+            HttpResponseMessage response = await client.GetAsync($"api/resident/CountFemale");
+            if (response.IsSuccessStatusCode)
+            {
+                string contentResponse = await response.Content.ReadAsStringAsync();
+                countFemale = JsonConvert.DeserializeObject<int>(contentResponse);
+                StateHasChanged();
+            }
+        }
+    }
+
+
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+           token = await localStorage.GetItemAsStringAsync("token");
+            await totalResidents();
+            await totalHousehold();
+            await totalMale();
+            await totalFemale();
+            await UpdateChartData();
+            StateHasChanged();
+        }
+    }
+}

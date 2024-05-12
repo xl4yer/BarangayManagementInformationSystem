@@ -1,0 +1,174 @@
+﻿@page "/confirmation"
+@layout LoginLayout
+@inject ISnackbar Snackbar
+@using System.Net.Http.Headers
+@inject ILocalStorageService localStorage
+@inject NavigationManager Nav
+@using Bmis2.Models
+@using System.Text
+@inject SweetAlertService Swal
+
+<PageTitle>Confirmation</PageTitle>
+
+<MudCard>
+    <MudCardContent>
+        <MudText Align="Align.Center">
+            To activate your account, <br />
+            Please enter the activation<br />
+            code sent to your email at <br />
+            <b>@Email</b></MudText>
+        <br />
+        <MudTextField @bind-Value="@ActivationCode"
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense">
+        </MudTextField>
+        <br />
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Tertiary"
+                   FullWidth="true"
+                   @onclick="Submit">Submit</MudButton>
+    </MudCardContent>
+</MudCard>
+
+
+
+@code {
+    public string ActivationCode { get; set; } = "";
+    [Parameter] public residents xres { get; set; } = new residents();
+
+    string Email;
+    protected override async Task OnParametersSetAsync()
+    {
+        Email = await localStorage.GetItemAsStringAsync("email");
+    }
+
+    public async Task Submit()
+    {
+        if (string.IsNullOrEmpty(ActivationCode))
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Provide Activation Code",
+                    Icon = SweetAlertIcon.Warning,
+                });
+        }
+        else
+        {
+            string randomNumbers = await localStorage.GetItemAsStringAsync("randomNumbers");
+            string resID = await localStorage.GetItemAsStringAsync("resID");
+            string username = await localStorage.GetItemAsStringAsync("username");
+            string password = await localStorage.GetItemAsStringAsync("password");
+            string email = await localStorage.GetItemAsStringAsync("email");
+            string fname = await localStorage.GetItemAsStringAsync("fname");
+            string mname = await localStorage.GetItemAsStringAsync("mname");
+            string lname = await localStorage.GetItemAsStringAsync("lname");
+            string ext = await localStorage.GetItemAsStringAsync("ext");
+            string gender = await localStorage.GetItemAsStringAsync("gender");
+            string bdate = await localStorage.GetItemAsStringAsync("bdate");
+            DateTime dateTime = DateTime.Parse(bdate);
+            string dateTimeString = dateTime.ToString("yyyy-MM-ddTHH:mm:ss");
+            string status = await localStorage.GetItemAsStringAsync("status");
+            string contact = await localStorage.GetItemAsStringAsync("contact");
+            string purok = await localStorage.GetItemAsStringAsync("purok");
+
+            if (ActivationCode == randomNumbers)
+            {
+                int i = 0;
+                try
+                {
+                    var res = new residents
+                        {
+                            resID = resID,
+                            username = username,
+                            password = password,
+                            email = email,
+                            fname = fname,
+                            mname = mname,
+                            lname = lname,
+                            ext = ext,
+                            gender = gender,
+                            bdate = dateTime,
+                            status = status,
+                            contact = contact,
+                            purok = purok
+                        };
+                    using (HttpClient client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri($"https://localhost:7242/");
+                        var json = JsonConvert.SerializeObject(res);
+                        HttpContent content = new StringContent(json);
+                        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                        await localStorage.GetItemAsStringAsync("token"));
+                        HttpResponseMessage response = await client.PostAsync($"api/resident/addresident", content);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string contentresponse = await response.Content.ReadAsStringAsync();
+                            i = JsonConvert.DeserializeObject<int>(contentresponse);
+                            if (i > 0)
+                            {
+                                await InvokeAsync(async () =>
+                                {
+                                    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                                        {
+                                            Title = "Successfully Registered",
+                                            Icon = SweetAlertIcon.Success,
+                                        });
+                                    await localStorage.RemoveItemAsync("randomNumbers");
+                                    await InvokeAsync(StateHasChanged);
+                                    await Task.Delay(2000);
+                                    Nav.NavigateTo("/");
+                                });
+                            }
+                        }
+                        else
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                                    {
+                                        Title = "Error",
+                                        Icon = SweetAlertIcon.Error,
+                                    });
+                                StateHasChanged();
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            else
+            {
+                SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Invalid Activation Code",
+                        Icon = SweetAlertIcon.Error,
+                    });
+            }
+        }
+        
+    }
+
+}
+
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+        font-size: 12px;
+        font-family: 'Poppins', sans-serif;
+        background-image: url('logo2.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+</style>

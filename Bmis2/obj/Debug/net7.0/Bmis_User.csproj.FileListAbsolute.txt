@@ -1,0 +1,7 @@
+C:\Users\Xlayer\source\repos\Bmis\Bmis2\obj\Debug\net7.0\Bmis_User.csproj.AssemblyReference.cache
+C:\Users\Xlayer\source\repos\Bmis\Bmis2\obj\Debug\net7.0\Bmis_User.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Xlayer\source\repos\Bmis\Bmis2\obj\Debug\net7.0\Bmis_User.AssemblyInfoInputs.cache
+C:\Users\Xlayer\source\repos\Bmis\Bmis2\obj\Debug\net7.0\Bmis_User.AssemblyInfo.cs
+C:\Users\Xlayer\source\repos\Bmis\Bmis2\obj\Debug\net7.0\Bmis_User.csproj.CoreCompileInputs.cache
+C:\Users\Xlayer\source\repos\Bmis\Bmis2\obj\Debug\net7.0\Bmis_User.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Xlayer\source\repos\Bmis\Bmis2\obj\Debug\net7.0\Bmis_User.sourcelink.json

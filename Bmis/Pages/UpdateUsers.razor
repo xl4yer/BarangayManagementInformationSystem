@@ -1,0 +1,188 @@
+﻿﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Net.Http.Headers
+@using Bmis.Models;
+@using Newtonsoft.Json;
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
+@inject ISnackbar snackBar
+@using System.Net.Mail
+
+@if(role == "Admin")
+{
+    <EditForm Model="@xuser" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudDialog TitleClass="mud-primary" DisableSidePadding="true">
+            <TitleContent>
+                <MudText Typo="Typo.h6" Style="color:white">
+                    Update
+                </MudText>
+            </TitleContent>
+            <DialogContent>
+                <MudContainer Style="max-height: 500px;">
+                    <p1>Name</p1>
+                    <MudTextField Clearable @bind-Value="@xuser.name" For="@(() => xuser.name)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                    <p1>Username</p1>
+                    <MudTextField Clearable @bind-Value="@xuser.username" For="@(() => xuser.username)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                    <p1>Password</p1>
+                    <MudTextField @bind-Value="@xuser.password" For="@(() => xuser.password)" Margin="Margin.Dense" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="Click" AdornmentAriaLabel="Show Password" />
+                    <p1>Role</p1>
+                    <MudSelect @bind-Value="@xuser.role" For="@(() => xuser.role)" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                        <MudSelectItem Value="@("Admin")" />
+                        <MudSelectItem Value="@("Clerk")" />
+                    </MudSelect>
+                </MudContainer>
+            </DialogContent>
+            <DialogActions>
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="Submit">Update</MudButton>
+            </DialogActions>
+        </MudDialog>
+    </EditForm>
+}
+else
+{
+    <EditForm Model="@xuser" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudDialog TitleClass="mud-primary" DisableSidePadding="true">
+            <TitleContent>
+                <MudText Typo="Typo.h6" Style="color:white">
+                    Update
+                </MudText>
+            </TitleContent>
+            <DialogContent>
+                <MudContainer Style="max-height: 500px;">
+                    <p1>ID No.</p1>
+                    <MudTextField Clearable @bind-Value="@userID" For="@(() => userID)" Disabled Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                    <p1>Name</p1>
+                    <MudTextField Clearable @bind-Value="@name" For="@(() => name)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                    <p1>Username</p1>
+                    <MudTextField Clearable @bind-Value="@username" For="@(() => username)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField> <br />
+                    <p1>Password</p1>
+                    <MudTextField @bind-Value="@password" For="@(() => password)" Margin="Margin.Dense" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="Click" AdornmentAriaLabel="Show Password" />
+                </MudContainer>
+            </DialogContent>
+            <DialogActions>
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="Submit">Update</MudButton>
+            </DialogActions>
+        </MudDialog>
+    </EditForm>
+}
+
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    [Parameter] public users xuser { get; set; } = new users();
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    bool isShow;
+    public string role = "";
+    public string username = "";
+    public string userID = "";
+    public string password = "";
+    public string name = "";
+
+    public void OnValidSubmit(EditContext context)
+    {
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            role = await localStorage.GetItemAsStringAsync("role");
+            username = await localStorage.GetItemAsStringAsync("username");
+            userID = await localStorage.GetItemAsStringAsync("userID");
+            password = await localStorage.GetItemAsStringAsync("password");
+            name = await localStorage.GetItemAsStringAsync("name");
+            StateHasChanged();
+           
+        }
+    }
+
+    public async Task Submit()
+    {
+        if (string.IsNullOrEmpty(xuser.name) &&
+        string.IsNullOrEmpty(xuser.username) &&
+        string.IsNullOrEmpty(xuser.password) &&
+        string.IsNullOrEmpty(xuser.role))
+        {
+            snackBar.Add($"Fill The Required Fields!", Severity.Warning);
+        }
+        else
+        {
+            int i = 0;
+            try
+            {
+                var u = new users
+                    {
+                        userID = xuser.userID,
+                        name = xuser.name,
+                        username = xuser.username,
+                        password = xuser.password,
+                        role = xuser.role
+                    };
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                    var json = JsonConvert.SerializeObject(u);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PutAsync($"api/User/UpdateUsers", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                snackBar.Add($"Done: Successfully Updated!", Severity.Success);
+                                await InvokeAsync(StateHasChanged);
+                                MudDialog.Cancel();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(() =>
+                        {
+                            snackBar.Add($"Warning: {response.ReasonPhrase}", Severity.Warning);
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+    }
+    public void Cancel()
+    {
+        MudDialog.Cancel(); 
+    }
+
+    void Click()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+}

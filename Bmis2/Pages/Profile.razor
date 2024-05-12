@@ -1,0 +1,334 @@
+﻿@page "/profile/{resid}"
+@using Bmis2.Models
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@using System.Net.Http.Headers
+@inject NavigationManager Nav
+@inject HttpClient httpClient
+@using Newtonsoft.Json
+@inject ILocalStorageService localStorage
+@inject IDialogService Dialog
+@inject SweetAlertService Swal
+
+<PageTitle>Profile</PageTitle>
+
+
+<EditForm Model="@xres" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Profile" Icon="@Icons.Material.Filled.Person">
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p1>Household No.</p1>
+                        <MudTextField @bind-Value="@xres.houseID" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Last Name</p1>
+                        <MudTextField @bind-Value="@xres.lname" For="@(() => xres.lname)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>First Name</p1>
+                        <MudTextField @bind-Value="@xres.fname" For="@(() => xres.fname)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Middle Name</p1>
+                        <MudTextField @bind-Value="@xres.mname" For="@(() => xres.mname)" HelperText="Leave blank if Not Applicable" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <p1>Extension</p1>
+                        <MudTextField @bind-Value="@xres.ext" HelperText="Leave blank if Not Applicable" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <p1>Purok</p1>
+                        <MudTextField @bind-Value="@xres.purok" For="@(() => xres.purok)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                    </div>
+                    <div class="col-sm-6">
+                        <p1>Gender</p1>
+                        <MudSelect @bind-Value="@xres.gender" For="@(() => xres.gender)" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                            <MudSelectItem Value="@("Male")" />
+                            <MudSelectItem Value="@("Female")" />
+                        </MudSelect>
+                        <br />
+                        <p1>Birthdate</p1>
+                        <MudDatePicker Editable="true" Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Date="xres.bdate" Placeholder="Birthdate" />
+                        <br />
+                        <p1>Marital Status</p1>
+                        <MudSelect @bind-Value="@xres.status" For="@(() => xres.status)" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                            <MudSelectItem Value="@("Single")" />
+                            <MudSelectItem Value="@("Married")" />
+                            <MudSelectItem Value="@("Separated")" />
+                            <MudSelectItem Value="@("Widowed")" />
+                        </MudSelect>
+                        <br />
+                        <p1>Contact No.</p1>
+                        <MudTextField @bind-Value="@xres.contact" For="@(() => xres.contact)" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br />
+                        <p1>Email</p1>
+                        <MudTextField @bind-Value="@xres.email" For="@(() => xres.email)" Disabled Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        <br /><br />
+                        <MudToolBar>
+                            <MudSpacer />
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="UpdateProfile">Update Profile</MudButton>
+                        </MudToolBar>
+                    </div>
+                </div>
+            </div>
+        </MudTabPanel>
+        <MudTabPanel Text="Settings" Icon="@Icons.Material.Filled.Settings">
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-sm-3">
+                      
+                    </div>
+                    <div class="col-sm-6">
+                        <h5>Change your Password</h5><br />
+                        @if (hide)
+                        {
+                            <MudTextField @bind-Value="@resID2" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        }
+                        <p1>New Password</p1>
+                        <MudTextField @bind-Value="@xres.password" For="@(() => xres.password)" Margin="Margin.Dense" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="Click" AdornmentAriaLabel="Show Password" />
+                        <br />
+                        <p1>Confirm Password</p1>
+                        <MudTextField @bind-Value="@xres.password2" For="@(() => xres.password2)" Margin="Margin.Dense" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="Click" AdornmentAriaLabel="Show Password" />
+                        <br />
+                        <MudToolBar>
+                            <MudSpacer /> <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="Clear">Clear</MudButton> &nbsp;
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="UpdatePass">Update Password</MudButton>
+                        </MudToolBar>
+                    </div>
+                    <div class="col-sm-3">
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </MudTabPanel>
+    </MudTabs>
+</EditForm>
+
+
+@code {
+    DateTime? date = DateTime.Today;
+    [Parameter] public string resid { get; set; }
+    [Parameter] public residents xres { get; set; } = new residents();
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    bool isShow;
+    bool hide;
+    public string resID2 = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        resID2 = await localStorage.GetItemAsStringAsync("resID");
+        string apiUrl = "https://localhost:7242/api/Resident/Residents2";
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await localStorage.GetItemAsStringAsync("token"));
+        var response = await client.GetAsync(apiUrl);
+        response.EnsureSuccessStatusCode();
+        string responseBodyJson = await response.Content.ReadAsStringAsync();
+        var clr = JsonConvert.DeserializeObject<List<residents>>(responseBodyJson);
+        xres = clr.Where(x => x.resID == resid).FirstOrDefault();
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+
+    }
+
+    void Clear()
+    {
+        xres.password = "";
+        xres.password2 = "";
+    }
+
+    void Click()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+    private async Task UpdateProfile()
+    {
+        if (string.IsNullOrEmpty(xres.lname) ||
+            string.IsNullOrEmpty(xres.fname) ||
+            string.IsNullOrEmpty(xres.purok) ||
+            string.IsNullOrEmpty(xres.gender) ||
+            string.IsNullOrEmpty(xres.status) ||
+            string.IsNullOrEmpty(xres.contact))
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Fill the Required Fields!",
+                    Icon = SweetAlertIcon.Warning,
+                });
+        }
+        else
+        {
+            int i = 0;
+            try
+            {
+                var res = new residents
+                    {
+                        houseID = xres.houseID,
+                        resID = xres.resID,
+                        fname = xres.fname,
+                        mname = xres.mname,
+                        lname = xres.lname,
+                        ext = xres.ext,
+                        gender = xres.gender,
+                        bdate = xres.bdate,
+                        status = xres.status,
+                        contact = xres.contact,
+                        purok = xres.purok
+                    };
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"https://localhost:7242/");
+                    var json = JsonConvert.SerializeObject(res);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                        await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PutAsync($"api/Resident/UpdateResident", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                Clear();
+                                SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                                    {
+                                        Title = "Successfully Updated",
+                                        Icon = SweetAlertIcon.Success,
+                                    });
+
+                                await InvokeAsync(StateHasChanged);
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(async () =>
+                        {
+                            Clear();
+                            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                                {
+                                    Title = "Error!",
+                                    Icon = SweetAlertIcon.Error,
+                                });
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here
+            }
+        }
+    }
+
+    private async Task UpdatePass()
+    {
+        if (xres.password != xres.password2)
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Password Does Not Match!",
+                    Icon = SweetAlertIcon.Warning,
+                });
+        }
+        else if (string.IsNullOrEmpty(xres.password))
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Fill the Required Fields!",
+                    Icon = SweetAlertIcon.Warning,
+                });
+        }
+        else
+        {
+            int i = 0;
+            try
+            {
+                var res = new residents
+                    {
+                        houseID = xres.houseID,
+                        fname = xres.fname,
+                        mname = xres.mname,
+                        lname = xres.lname,
+                        ext = xres.ext,
+                        gender = xres.gender,
+                        bdate = xres.bdate,
+                        status = xres.status,
+                        contact = xres.contact,
+                        purok = xres.purok,
+                        //Update Password
+                        resID = resID2,
+                        password = xres.password
+                    };
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"https://localhost:7242/");
+                    var json = JsonConvert.SerializeObject(res);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PutAsync($"api/Resident/UpdatePassword", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                Clear();
+                                SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                                    {
+                                        Title = "Successfully Updated",
+                                        Icon = SweetAlertIcon.Success,
+                                    });
+
+                                await InvokeAsync(StateHasChanged);
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(async () =>
+                        {
+                            Clear();
+                            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                                {
+                                    Title = "Error!",
+                                    Icon = SweetAlertIcon.Error,
+                                });
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+    }
+}
+
+
+
+

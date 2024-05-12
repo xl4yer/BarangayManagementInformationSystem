@@ -1,0 +1,99 @@
+﻿﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Net.Http.Headers
+@using Bmis.Models;
+@using Newtonsoft.Json;
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
+@inject ISnackbar snackBar
+@using System.Net.Mail
+
+<EditForm Model="@xuser" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudDialog TitleClass="mud-primary" DisableSidePadding="true">
+        <TitleContent>
+            <MudText Typo="Typo.h6" Style="color:white">
+                Just Checking.....
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudContainer Style="max-height: 500px">
+                    <h6>Do you want to DELETE this record?</h6>
+                    <p1>You cannot UNDO this action!</p1>
+            </MudContainer>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Warning" @onclick="Submit">Confirm</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    [Parameter] public users xuser { get; set; } = new users();
+
+    public void OnValidSubmit(EditContext context)
+    {
+
+    }
+
+    public async Task Submit()
+    {
+            int i = 0;
+            try
+            {
+                var u = new users
+                    {
+                    userID = xuser.userID,
+                    name = xuser.name,
+                    username = xuser.username,
+                    password = xuser.password,
+                    role = xuser.role
+                    };
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                    var json = JsonConvert.SerializeObject(u);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PostAsync($"api/User/DeleteUsers", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                snackBar.Add($"Done: Successfully Deleted!", Severity.Success);
+                                await InvokeAsync(StateHasChanged);
+                                MudDialog.Cancel();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(() =>
+                        {
+                            snackBar.Add($"Warning: {response.ReasonPhrase}", Severity.Warning);
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+    
+    public void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

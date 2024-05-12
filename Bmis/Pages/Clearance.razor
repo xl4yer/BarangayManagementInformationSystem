@@ -1,0 +1,436 @@
+﻿@page "/clearance"
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject ISnackbar snackBar
+@inject IDialogService dialogService
+@using System.Net.Http.Headers
+@inject IDialogService Dialog
+@using Bmis.Models
+
+<PageTitle>CLearance Record</PageTitle>
+
+@if (token != null)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <br /><br />
+                <EditForm Model="@xclearance" OnValidSubmit="OnValidSubmit">
+                    <DataAnnotationsValidator />
+                    <MudContainer Style="max-height: 500px;">
+                        <p1>Name</p1>
+                        <MudAutocomplete Clearable T="residents" @bind-Value="xresident" Variant="Variant.Outlined" Margin="Margin.Dense" SearchFunc="@Search2" Placeholder="Search Name" ToStringFunc="@(e => e == null ? null : $"{e.fullname}")" Strict="false"></MudAutocomplete><br />
+                        <p1>Age</p1>
+                        <MudTextField Clearable @bind-Value="@xresident.age" Variant="Variant.Outlined" ReadOnly Margin="Margin.Dense"></MudTextField> <br />
+                        <p1>Purok</p1>
+                        <MudTextField Clearable @bind-Value="@xresident.purok" Variant="Variant.Outlined" ReadOnly Margin="Margin.Dense"></MudTextField> <br />
+                        <p1>Purpose</p1>
+                        <MudTextField @bind-Value="@xclearance.purpose" For="@(() => xclearance.purpose)" Placeholder="Enter Purpose" T="string" Lines="3" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                    </MudContainer>
+                    <MudToolBar>
+                        <MudSpacer />
+                        <MudButton>Clear</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" @onclick="Submit">Submit</MudButton>
+                    </MudToolBar>
+                </EditForm>
+            </div>
+            <div class="col-sm-9">
+
+                <MudToolBar>
+                    <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Info" @onclick="Refresh">Refresh</MudButton>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="txtsearch" Clearable TextChanged="Search" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary" Placeholder="Search" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudToolBar>
+
+                @if (clearanceList != null && clearanceList.Any())
+                {
+                    <MudTable Class="ma-5" Dense="true" Hover="true" Items="@clearanceList" HorizontalScrollbar="true" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ? "500px" : "")">
+                        <HeaderContent>
+                            <MudTh>Transaction No.</MudTh>
+                            <MudTh>Date</MudTh>
+                            <MudTh>Name</MudTh>
+                            <MudTh>Purpose</MudTh>
+                            <MudTh>Status</MudTh>
+                            <MudTh colspan="3"></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Transaction No.">@context.clearID</MudTd>
+                            <MudTd DataLabel="Birthdate">@context.date?.ToString("MMMM d, yyyy")</MudTd>
+                            <MudTd DataLabel="Fullname">@context.fullname</MudTd>
+                            <MudTd DataLabel="Purpose">@context.purpose</MudTd>
+                            <MudTd DataLabel="Status">
+                                @if (context.rstatus == "Submitted")
+                                {
+                                    <MudChip Color="Color.Info" Size="Size.Small">@context.rstatus</MudChip>
+                                }
+                                else if (context.rstatus == "Claimed")
+                                {
+                                    <MudChip Color="Color.Success" Size="Size.Small">@context.rstatus</MudChip>
+                                }
+                                else
+                                {
+                                    <MudChip Color="Color.Warning" Size="Size.Small">@context.rstatus</MudChip>
+                                }
+                            </MudTd>
+                            <MudTd>
+                                <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" VerticalAlign>
+                                    <MudTooltip Text="Edit" Arrow="true" Placement="Placement.Right">
+                                        <MudButton StartIcon="@Icons.Material.Filled.Edit" Size="Size.Small" IconColor="Color.Primary" @onclick="(e => Edit(context.clearID))"></MudButton>
+                                    </MudTooltip>
+                                    <MudTooltip Text="Update Status" Arrow="true" Placement="Placement.Right">
+                                        <MudButton StartIcon="@Icons.Material.Filled.Update" Size="Size.Small" IconColor="Color.Tertiary" @onclick="(e => Update(context.clearID))"></MudButton>
+                                    </MudTooltip>
+                                    <MudTooltip Text="Print" Arrow="true" Placement="Placement.Right">
+                                        <MudButton StartIcon="@Icons.Material.Filled.Print" Size="Size.Small" IconColor="Color.Warning" @onclick="(e => Print(context.clearID))"></MudButton>
+                                    </MudTooltip>
+                                </MudButtonGroup>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                }
+                else
+                {
+                    <p>No Records Found</p>
+                }
+
+            </div>
+        </div>
+    </div>
+}
+else{
+    <style>
+
+        /*======================
+                                    404 page
+                                =======================*/
+
+
+        .page_404 {
+            padding: 40px 0;
+            background: #fff;
+            font-family: 'Arvo', serif;
+        }
+
+            .page_404 img {
+                width: 100%;
+            }
+
+        .four_zero_four_bg {
+            background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+            height: 400px;
+            background-position: center;
+        }
+
+
+            .four_zero_four_bg h1 {
+                font-size: 80px;
+            }
+
+            .four_zero_four_bg h3 {
+                font-size: 80px;
+            }
+
+        .link_404 {
+            color: #fff !important;
+            padding: 10px 20px;
+            background: #39ac31;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .contant_box_404 {
+            margin-top: -50px;
+        }
+    </style>
+    <center>
+        <section class="page_404">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 ">
+                        <div class="col-sm-10 col-sm-offset-1  text-center">
+                            <div class="four_zero_four_bg">
+                                <h1 class="text-center ">404</h1>
+
+
+                            </div>
+
+                            <div class="contant_box_404">
+                                <h3 class="h2">
+                                    Look like you're lost
+                                </h3>
+
+                                <p>the page you are looking for not avaible!</p>
+
+                                <a href="" class="link_404">Go to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </center>
+}
+
+
+
+
+
+@code {
+    private string txtsearch { get; set; } = "";
+    clearance[]? clearanceList;
+    bool fixed_header = true;
+    bool fixed_footer = false;
+    private string search { get; set; } = "";
+    private bool hide = false;
+    DateTime? dateNow = DateTime.Today;
+    private string text { get; set; } = "";
+    [Parameter] public residents xresident { get; set; } = new residents();
+    [Parameter] public clearance xclearance { get; set; } = new clearance();
+    public string token = "";
+
+    protected HubConnection hubConnection;
+    protected async override Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Nav.ToAbsoluteUri("/hub"))
+            .Build();
+
+        hubConnection.On("client", async () =>
+        {
+            await Task.Delay(2000);
+            await LoadClearance();
+            await InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            token = await localStorage.GetItemAsStringAsync("token");
+            await LoadClearance();
+        }
+    }
+
+    public void OnValidSubmit(EditContext context)
+    {
+
+    }
+
+    private async Task LoadClearance()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendClient");
+        }
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                await localStorage.GetItemAsStringAsync("token"));
+                HttpResponseMessage response = await client.GetAsync($"api/Clearance/Clearance");
+                if (response.IsSuccessStatusCode)
+                {
+                    string contentrespose = await response.Content.ReadAsStringAsync();
+                    clearanceList = JsonConvert.DeserializeObject<clearance[]>(contentrespose);
+                    StateHasChanged();
+                }
+                else
+                {
+                 //
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+        //
+        }
+    }
+
+
+    public async Task Search()
+    {
+        if (string.IsNullOrWhiteSpace(txtsearch))
+        {
+            StateHasChanged();
+            return;
+        }
+        await hubConnection.StopAsync();
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri($"{Nav.BaseUri}");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+            await localStorage.GetItemAsStringAsync("token"));
+            HttpResponseMessage response = await client.GetAsync($"api/clearance/searchclearance?search={txtsearch}");
+            if (response.IsSuccessStatusCode)
+            {
+                string contentrespose = await response.Content.ReadAsStringAsync();
+                clearanceList = JsonConvert.DeserializeObject<clearance[]>(contentrespose);
+                StateHasChanged();
+            }
+            else
+            {
+                snackBar.Add($"Warning: {response.StatusCode}", Severity.Warning);
+            }
+        }
+    }
+
+    private async Task Refresh()
+    {
+        if (hubConnection.State == HubConnectionState.Disconnected)
+        {
+            await hubConnection.StartAsync();
+        }
+        await LoadClearance();
+    }
+
+    private async Task Add()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("xresident", new residents());
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        var dialog = await Dialog.Show<AddClearance>("Add Clearance", parameters, options).Result;
+    }
+
+    public residents xres { get; set; } = new residents();
+    private async Task Edit(string id)
+    {
+        clearance[]? xclearance;
+        var xxclearance = from s in clearanceList where s.clearID == id select s;
+        xclearance = xxclearance.ToArray();
+        xres.resID = xclearance[0].resID;
+        xres.fullname = xclearance[0].fullname;
+        xres.age = xclearance[0].age;
+        xres.purok = xclearance[0].purok;
+        var parameters = new DialogParameters();
+        var update = clearanceList.FirstOrDefault(_ => _.clearID == id);
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        parameters.Add("xclearance", update);
+        parameters.Add("xresident", xres);
+        var dialog = Dialog.Show<UpdateClearance>("Update Clearance", parameters, options);
+        var result = await dialog.Result;
+    }
+
+
+    private async Task Update(string id)
+    {
+        clearance[]? xclearance;
+        var xxclearance = from s in clearanceList where s.clearID == id select s;
+        xclearance = xxclearance.ToArray();
+        xres.resID = xclearance[0].resID;
+        xres.fullname = xclearance[0].fullname;
+        xres.age = xclearance[0].age;
+        xres.purok = xclearance[0].purok;
+        var parameters = new DialogParameters();
+        var update = clearanceList.FirstOrDefault(_ => _.clearID == id);
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        parameters.Add("xclearance", update);
+        parameters.Add("xresident", xres);
+        var dialog = Dialog.Show<UpdateClearanceStatus>("Update Status", parameters, options);
+        var result = await dialog.Result;
+    }
+
+    [Inject]
+    protected IJSRuntime JSRuntime { get; set; }
+    private async Task Print(string id)
+    {
+        clearance[]? xclearance;
+        var xxclearance = from s in clearanceList where s.clearID == id select s;
+        xclearance = xxclearance.ToArray();
+        xres.resID = xclearance[0].resID;
+        xres.fullname = xclearance[0].fullname;
+        xres.age = xclearance[0].age;
+        xres.purok = xclearance[0].purok;
+        var parameters = new DialogParameters();
+        var update = clearanceList.FirstOrDefault(_ => _.clearID == id);
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        parameters.Add("xclearance", update);
+        parameters.Add("xresident", xres);
+        var dialog = Dialog.Show<PClearance>("Print Clearance", parameters, options);
+        var result = await dialog.Result;
+        // string path = $"printclearance/{id}";
+        // await OpenInNewTab(path);
+    }
+
+    private async Task OpenInNewTab(string url)
+    {
+        await JSRuntime.InvokeVoidAsync("window.open", url, "_blank", "noopener,noreferrer");
+    }
+
+    private async Task<IEnumerable<residents>> Search2(string value)
+    {
+        HttpClient httpClient = new HttpClient();
+        httpClient.BaseAddress = new Uri($"{Nav.BaseUri}");
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+        await localStorage.GetItemAsStringAsync("token"));
+        var xinfo = await httpClient.GetFromJsonAsync<List<residents>>($"api/resident/searchresident?search={value}");
+        return xinfo;
+    }
+
+    private async Task Submit()
+    {
+
+        if (string.IsNullOrEmpty(xresident.resID) &&
+            string.IsNullOrEmpty(xclearance.purpose))
+        {
+            snackBar.Add($"Fill The Required Fields!", Severity.Warning);
+        }
+        else
+        {
+            int i = 0;
+            try
+            {
+                var _clearance = new clearance
+                    {
+                        clearID = Guid.NewGuid().ToString(),
+                        type = "Walk in",
+                        date = dateNow.Value,
+                        resID = xresident.resID,
+                        purpose = xclearance.purpose
+                    };
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                    var json = JsonConvert.SerializeObject(_clearance);
+                    HttpContent content = new StringContent(json);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    await localStorage.GetItemAsStringAsync("token"));
+                    HttpResponseMessage response = await client.PostAsync($"api/clearance/addclearance", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string contentresponse = await response.Content.ReadAsStringAsync();
+                        i = JsonConvert.DeserializeObject<int>(contentresponse);
+                        if (i > 0)
+                        {
+                            await InvokeAsync(async () =>
+                            {
+                                snackBar.Add($"Done: Successfully Saved!", Severity.Success);
+                                await InvokeAsync(StateHasChanged);
+                                await LoadClearance();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        await InvokeAsync(() =>
+                        {
+                            snackBar.Add($"Warning: {response.ReasonPhrase}", Severity.Warning);
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+       
+    }
+}

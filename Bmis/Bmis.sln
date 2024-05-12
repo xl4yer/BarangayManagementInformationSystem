@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bmis", "Bmis.csproj", "{64965936-85CD-4A54-A087-5F0BD34047D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bmis2", "..\Bmis2\Bmis2.csproj", "{13E1F106-75A0-411F-BE4B-C67232281738}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64965936-85CD-4A54-A087-5F0BD34047D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64965936-85CD-4A54-A087-5F0BD34047D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64965936-85CD-4A54-A087-5F0BD34047D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64965936-85CD-4A54-A087-5F0BD34047D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E1F106-75A0-411F-BE4B-C67232281738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E1F106-75A0-411F-BE4B-C67232281738}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E1F106-75A0-411F-BE4B-C67232281738}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E1F106-75A0-411F-BE4B-C67232281738}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {526EC4AF-EC00-4988-B766-A7E95D5D2FD1}
+	EndGlobalSection
+EndGlobal

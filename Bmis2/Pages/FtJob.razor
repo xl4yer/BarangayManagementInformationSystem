@@ -1,0 +1,156 @@
+﻿@page "/ftjob"
+@using Bmis2.Models
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject ISnackbar snackBar
+@inject IDialogService dialogService
+@using System.Net.Http.Headers
+@inject IDialogService Dialog
+@inject SweetAlertService Swal
+
+<PageTitle>First Time Job</PageTitle>
+
+<MudToolBar>
+    <h4>Transactions</h4>
+    <MudSpacer />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="Refresh">Refresh</MudButton> &nbsp;
+    <MudButton Variant="Variant.Filled" Color="Color.Tertiary" @onclick="Request">Request</MudButton>
+</MudToolBar>
+
+@if (ftjobList != null && ftjobList.Any())
+{
+    <MudTable Class="ma-5"
+              Dense="true"
+              Hover="true"
+              Items="@ftjobList"
+              HorizontalScrollbar="true"
+              FixedHeader="@fixed_header"
+              FixedFooter="@fixed_footer"
+              Height="@(fixed_header || fixed_footer ? "500px" : "")">
+        <HeaderContent>
+            <MudTh>Transaction No.</MudTh>
+            <MudTh>Date</MudTh>
+            <MudTh>Status</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Transaction No.">@context.ftjobID</MudTd>
+            <MudTd DataLabel="Date">@context.date?.ToString("MMMM d, yyyy")</MudTd>
+            <MudTd DataLabel="Status">
+                @if (context.rstatus == "Submitted")
+                {
+                    <MudChip Color="Color.Info" Size="Size.Small">@context.rstatus</MudChip>
+                }
+                else if (context.rstatus == "Claimed")
+                {
+                    <MudChip Color="Color.Success" Size="Size.Small">@context.rstatus</MudChip>
+                }
+                else
+                {
+                    <MudChip Color="Color.Warning" Size="Size.Small">@context.rstatus</MudChip>
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+else
+{
+    <p>No Records Found</p>
+}
+
+@code {
+
+    ftjob[]? ftjobList;
+    bool fixed_header = true;
+    bool fixed_footer = false;
+    string resID { get; set; } = "";
+
+    protected HubConnection hubConnection;
+    protected async override Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Nav.ToAbsoluteUri("https://localhost:7242/hub"))
+            .Build();
+
+        hubConnection.On("client", async () =>
+        {
+            await Task.Delay(2000);
+            await LoadFtJob();
+            await InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+    private async Task ResID()
+    {
+        resID = await localStorage.GetItemAsStringAsync("resID");
+    }
+
+    async Task Refresh()
+    {
+        await LoadFtJob();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ResID();
+            await LoadFtJob();
+        }
+    }
+
+    private async Task Edit(string id)
+    {
+        var parameters = new DialogParameters();
+        var update = ftjobList.FirstOrDefault(_ => _.ftjobID == id);
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        parameters.Add("xclearance", update);
+        var dialog = Dialog.Show<UpdateClearance>("Update Clearance", parameters, options);
+        var result = await dialog.Result;
+    }
+
+    private async Task LoadFtJob()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendClient");
+        }
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"https://localhost:7242/");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                await localStorage.GetItemAsStringAsync("token"));
+                HttpResponseMessage response = await client.GetAsync($"api/FtJob/RequestFtJob?resID={resID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string contentrespose = await response.Content.ReadAsStringAsync();
+                    ftjobList = JsonConvert.DeserializeObject<ftjob[]>(contentrespose);
+                    StateHasChanged();
+                }
+                else
+                {
+                    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Title = "Disconnected to Server",
+                            Icon = SweetAlertIcon.Error,
+                        });
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //
+        }
+    }
+
+    void Request()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall };
+        parameters.Add("xjob", new ftjob());
+        var dialog = Dialog.Show<AddftJob>("Request First Time Job", parameters, options).Result;
+    }
+}

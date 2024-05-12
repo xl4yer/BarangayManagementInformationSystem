@@ -1,0 +1,36 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{13E1F106-75A0-411F-BE4B-C67232281738}|..\\Bmis2\\Bmis2.csproj|c:\\users\\xlayer\\documents\\dumps\\bmis\\bmis2\\pages\\addclearance.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AddClearance.razor",
+              "DocumentMoniker": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis2\\Pages\\AddClearance.razor",
+              "RelativeDocumentMoniker": "..\\Bmis2\\Pages\\AddClearance.razor",
+              "ToolTip": "C:\\Users\\Xlayer\\Documents\\dumps\\Bmis\\Bmis2\\Pages\\AddClearance.razor",
+              "RelativeToolTip": "..\\Bmis2\\Pages\\AddClearance.razor",
+              "ViewState": "AQIAACIAAAAAAAAAAAAAAA4AAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-07T23:36:31.952Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

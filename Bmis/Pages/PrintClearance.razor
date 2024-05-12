@@ -1,0 +1,693 @@
+﻿@page "/printclearance/{id}"
+@inject NavigationManager Nav
+@using Bmis.Models
+@layout LoginLayout
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService localStorage
+@using System.Net.Http.Headers
+
+
+<style>
+    .sig1 {
+        position: absolute;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto;
+    }
+
+    .grid-item {
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        text-align: center;
+    }
+
+    .box {
+        width: 120px;
+        height: 120px;
+        border: 1px solid black;
+    }
+
+    .box2 {
+        width: 170px;
+        height: 110px;
+        border: 1px solid black;
+    }
+
+    .print-content {
+        background-image: url('opacity.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+</style>
+
+<div class="print-content" id="printContent">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <img src="logo.png" height="100" />
+            </div>
+            <div class="col-sm-6" style="text-align:center">
+                <br />
+                Republic of the Philippines <br />
+                City of General Santos<br />
+                <div style="font-weight:bold">BARANGAY SAN ISIDRO</div>
+                <div style="font-style:italic">TEL NO: 887-5976, 887-5979</div>
+            </div>
+            <div class="col-sm-3">
+                <img src="picture34.png" height="100" />
+            </div>
+        </div>
+    </div>
+
+    <h2 style="text-align:center; font-family:'Times New Roman'">BARANGAY CLEARANCE</h2>
+
+
+    <div class="row">
+        <div class="col-sm-5"
+             style="text-align:left;
+                 font-weight:bold">
+            ALL OFFICERS OF LAW <br />
+            and To Whom It May Concern:
+
+        </div>
+        <div class="col-sm-3" style="text-align:center">
+        </div>
+        <div class="col-sm-4" style="text-align:center">
+            @date?.ToString("MMMM dd, yyyy")
+        </div>
+    </div>
+
+
+    <div style="text-align:center">
+        <div style="background-color:#D99594;
+                    font-family:'Times New Roman';
+                    font-weight:bold;
+                    font-size:25px;
+                    text-transform:uppercase">
+            @xclearance.fullname
+        </div>
+        <div style="font-weight:bold">OF</div>
+        <div style="background-color:#D99594;
+                    font-family:'Times New Roman';
+                    font-weight:bold;
+                    font-size:18px;
+                    text-transform:uppercase">
+            <div>PUROK @xclearance.purok</div>
+            BARANGAY SAN ISIDRO, GSC
+        </div>
+
+    </div>
+    <br />
+    Whose Community Tax Certificate No. appears below, is a
+    bonafide resident of this Barangay at present. This
+    <br />
+    is to certify further that upon verification of the
+    records filed in this office, subject individual was found to
+    <br />
+    have:
+    <div style="background-color:#D99594;
+                    font-family:'Times New Roman';
+                    font-weight:bold;
+                    font-size:18px;
+                    text-align:center">
+        NO DEROGATORY RECORD AND PENDING CASE
+    </div>
+
+    <br />
+    <div style="text-align:center">
+        This Certification is being issued upon the request of
+        this above-mentioned person for
+    </div>
+    <br />
+    <div style="background-color:#D99594;
+                    text-transform: uppercase;
+                    font-family:'Times New Roman';
+                    font-weight:bold;
+                    font-size:18px;
+                    text-align:center">
+        REQUIREMENT FOR @xclearance.purpose
+    </div>
+    <br />
+    Note however that this certification is subject for CANCELLATION
+    for any cause violate of existing rules and
+    <br />
+    regulations and ordinances of this barangay. This Barangay
+    Clearance is INVALID unless filed and approved by
+    <br /> the Office of the Punong Barangay.
+    <br />
+    <br />
+    <b>Records Verified By</b>
+    <div class="container" style="text-align:left">
+        <img src="sig1.png" class="sig1" alt="Sig1" height="100"> <br /><br /><br />
+        <div style="text-decoration:underline">EDSON JAY C. ALCARIA </div>
+        Barangay Secretary
+    </div>
+    <div class="container" style="text-align:left; text-indent:250px">
+        <img src="sig2.png" class="sig1" alt="Sig1" height="100"> <br /><br /><br />
+        <div style="text-decoration:underline">HON. EDWARD FREDERICK J. YUMANG</div>
+        <div style="text-indent:300px">Punong Barangay</div>
+    </div>
+
+    <div style="text-indent:110px; font-weight:bold">
+        NOT VALID WITHOUT DRY SEAL
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-6" style="font-size:12px">
+            <div class="grid-container">
+                <div class="grid-item">CTC NO.</div>
+                <div class="grid-item"></div>
+                <div class="grid-item">Issued on</div>
+                <div class="grid-item"></div>
+                <div class="grid-item">Issued At</div>
+                <div class="grid-item">BSI - GSC</div>
+                <div class="grid-item">OR No.</div>
+                <div class="grid-item"></div>
+                <div class="grid-item">OR Date </div>
+                <div class="grid-item"></div>
+                <div class="grid-item">Date Prepared </div>
+                <div class="grid-item"></div>
+                <div class="grid-item">Prepared by</div>
+                <div class="grid-item"></div>
+                <div class="grid-item">Valid up to</div>
+                <div class="grid-item">6 MONTHS AFTER ISSUE</div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="box"></div>
+            <div style="text-indent:20px">Right Thumb</div>
+        </div>
+        <div class="col-sm-4">
+            <br /><br />
+            <div style="text-align:center;
+                        text-indent: 15px;
+                        font-size:20px;
+                        text-decoration:underline;
+                        text-transform:uppercase">
+                @xclearance.fullname
+            </div>
+            <div style="font-size:15px;
+                            font-weight:normal;
+                            text-decoration:none;
+                            text-align:center;
+                           ">
+                Signature
+            </div>
+
+        </div>
+
+    </div> <br />
+    <div style="font-style:italic;
+                font-weight:bold">
+        Valid after payment of the
+        corresponding fee and within <u>6 months</u>
+        after issue.
+    </div>
+</div>
+<br />
+<br />
+<br />
+<br />
+
+<style>
+    .angry-grid {
+        display: grid;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        gap: 0px;
+        height: 1000px;
+        text-align:center;
+   
+    }
+
+    #item-0 {
+       
+        grid-row-start: 1;
+        grid-column-start: 2;
+        grid-row-end: 2;
+        grid-column-end: 6;
+        display: flex;
+        border-style: 1px solid;
+    }
+
+
+    #item-3 {
+       border:1px solid;
+        grid-row-start: 2;
+        grid-column-start: 2;
+        grid-row-end: 3;
+        grid-column-end: 4;
+    }
+
+    #item-4 {
+        border: 1px solid;
+        grid-row-start: 3;
+        grid-column-start: 2;
+        grid-row-end: 4;
+        grid-column-end: 4;
+    }
+
+    #item-5 {
+        border: 1px solid;
+        grid-row-start: 2;
+        grid-column-start: 4;
+        grid-row-end: 4;
+        grid-column-end: 6;
+    }
+
+    #item-6 {
+        border: 1px solid;
+        grid-row-start: 4;
+        grid-column-start: 2;
+        grid-row-end: 5;
+        grid-column-end: 5;
+    }
+
+    #item-7 {
+        border: 1px solid;
+        grid-row-start: 4;
+        grid-column-start: 5;
+        grid-row-end: 5;
+        grid-column-end: 6;
+    }
+
+    #item-8 {
+        border: 1px solid;
+        grid-row-start: 5;
+        grid-column-start: 2;
+        grid-row-end: 6;
+        grid-column-end: 6;
+    }
+
+    #item-9 {
+        border: 1px solid;
+        grid-row-start: 6;
+        grid-column-start: 2;
+        grid-row-end: 7;
+        grid-column-end: 4;
+    }
+
+    #item-10 {
+        border: 1px solid;
+        grid-row-start: 6;
+        grid-column-start: 4;
+        grid-row-end: 7;
+        grid-column-end: 5;
+    }
+
+    #item-11 {
+        border: 1px solid;
+        grid-row-start: 6;
+        grid-column-start: 5;
+        grid-row-end: 7;
+        grid-column-end: 6;
+    }
+
+    #item-12 {
+        border: 1px solid;
+        grid-row-start: 7;
+        grid-column-start: 2;
+        grid-row-end: 8;
+        grid-column-end: 4;
+    }
+
+    #item-13 {
+        border: 1px solid;
+        grid-row-start: 7;
+        grid-column-start: 4;
+        grid-row-end: 8;
+        grid-column-end: 5;
+    }
+
+    #item-14 {
+        border: 1px solid;
+        grid-row-start: 7;
+        grid-column-start: 5;
+        grid-row-end: 8;
+        grid-column-end: 6;
+    }
+
+    #item-15 {
+        border: 1px solid;
+        grid-row-start: 8;
+        grid-column-start: 2;
+        grid-row-end: 9;
+        grid-column-end: 4;
+    }
+
+    #item-16 {
+        border: 1px solid;
+        grid-row-start: 8;
+        grid-column-start: 4;
+        grid-row-end: 9;
+        grid-column-end: 5;
+    }
+
+    #item-17 {
+        border: 1px solid;
+        grid-row-start: 8;
+        grid-column-start: 5;
+        grid-row-end: 9;
+        grid-column-end: 6;
+    }
+
+    #item-18 {
+        border: 1px solid;
+        grid-row-start: 9;
+        grid-column-start: 2;
+        grid-row-end: 10;
+        grid-column-end: 4;
+    }
+
+    #item-19 {
+        border: 1px solid;
+        grid-row-start: 9;
+        grid-column-start: 4;
+        grid-row-end: 10;
+        grid-column-end: 5;
+    }
+
+    #item-20 {
+        border: 1px solid;
+        grid-row-start: 9;
+        grid-column-start: 5;
+        grid-row-end: 10;
+        grid-column-end: 6;
+    }
+
+    #item-21 {
+        border: 1px solid;
+        grid-row-start: 10;
+        grid-column-start: 2;
+        grid-row-end: 11;
+        grid-column-end: 4;
+    }
+
+    #item-22 {
+        border: 1px solid;
+        grid-row-start: 10;
+        grid-column-start: 4;
+        grid-row-end: 11;
+        grid-column-end: 5;
+    }
+
+    #item-23 {
+        border: 1px solid;
+        grid-row-start: 10;
+        grid-column-start: 5;
+        grid-row-end: 11;
+        grid-column-end: 6;
+    }
+
+    #item-24 {
+        border: 1px solid;
+        grid-row-start: 11;
+        grid-column-start: 2;
+        grid-row-end: 12;
+        grid-column-end: 4;
+    }
+
+    #item-25 {
+        border: 1px solid;
+        grid-row-start: 11;
+        grid-column-start: 4;
+        grid-row-end: 12;
+        grid-column-end: 5;
+    }
+
+    #item-26 {
+        border: 1px solid;
+        grid-row-start: 11;
+        grid-column-start: 5;
+        grid-row-end: 12;
+        grid-column-end: 6;
+    }
+
+    #item-27 {
+        border: 1px solid;
+        grid-row-start: 12;
+        grid-column-start: 2;
+        grid-row-end: 13;
+        grid-column-end: 4;
+    }
+
+    #item-28 {
+        border: 1px solid;
+        grid-row-start: 12;
+        grid-column-start: 4;
+        grid-row-end: 13;
+        grid-column-end: 5;
+    }
+
+    #item-29 {
+        border: 1px solid;
+        grid-row-start: 12;
+        grid-column-start: 5;
+        grid-row-end: 13;
+        grid-column-end: 6;
+    }
+
+    #item-30 {
+        border: 1px solid;
+        grid-row-start: 13;
+        grid-column-start: 2;
+        grid-row-end: 14;
+        grid-column-end: 6;
+    }
+
+    #item-31 {
+        border: 1px solid;
+        grid-row-start: 14;
+        grid-column-start: 2;
+        grid-row-end: 15;
+        grid-column-end: 6;
+    }
+
+    #item-32 {
+        border: 1px solid;
+        grid-row-start: 15;
+        grid-column-start: 2;
+        grid-row-end: 18;
+        grid-column-end: 3;
+    }
+
+    #item-33 {
+        border: 1px solid;
+        grid-row-start: 15;
+        grid-column-start: 3;
+        grid-row-end: 16;
+        grid-column-end: 4;
+    }
+
+    #item-34 {
+        border: 1px solid;
+        grid-row-start: 15;
+        grid-column-start: 4;
+        grid-row-end: 16;
+        grid-column-end: 5;
+    }
+
+    #item-35 {
+        border: 1px solid;
+        grid-row-start: 15;
+        grid-column-start: 5;
+        grid-row-end: 16;
+        grid-column-end: 6;
+    }
+
+    #item-36 {
+        border: 1px solid;
+        grid-row-start: 16;
+        grid-column-start: 3;
+        grid-row-end: 17;
+        grid-column-end: 4;
+    }
+
+    #item-37 {
+        border: 1px solid;
+        grid-row-start: 16;
+        grid-column-start: 4;
+        grid-row-end: 17;
+        grid-column-end: 5;
+    }
+
+    #item-38 {
+        border: 1px solid;
+        grid-row-start: 16;
+        grid-column-start: 5;
+        grid-row-end: 17;
+        grid-column-end: 6;
+    }
+
+    #item-39 {
+        border: 1px solid;
+        grid-row-start: 17;
+        grid-column-start: 3;
+        grid-row-end: 18;
+        grid-column-end: 4;
+    }
+
+    #item-40 {
+        border: 1px solid;
+        grid-row-start: 17;
+        grid-column-start: 4;
+        grid-row-end: 18;
+        grid-column-end: 5;
+    }
+
+    #item-41 {
+        border: 1px solid;
+        grid-row-start: 17;
+        grid-column-start: 5;
+        grid-row-end: 18;
+        grid-column-end: 6;
+    }
+
+    #item-42 {
+        border: 1px solid;
+        grid-row-start: 18;
+        grid-column-start: 2;
+        grid-row-end: 20;
+        grid-column-end: 6;
+    }
+
+    #item-43 {
+        border: 1px solid;
+        grid-row-start: 20;
+        grid-column-start: 2;
+        grid-row-end: 21;
+        grid-column-end: 6;
+    }
+</style>
+
+<div class="angry-grid">
+    <div id="item-0" style="border:1px solid">
+        <img src="bw.png" width="100px" height="100px" class="left-image" style="margin-left:120px;">
+        <div class="text">
+            <br />
+            <div>Republic of the Philippines</div>
+            <div style="font-weight:bold">GENERAL SANTOS CITY</div>
+            <div>Office of the Treasurer</div>
+        </div>
+       @*  <img src="bw.png" width="100px" height="100px" class="right-image"> *@
+    </div>
+    <div id="item-3"><div>Accountable Form No.51</div><div>(Revised January 1992)</div></div>
+    <div id="item-4"><div>&nbsp;</div><div>Date: @date?.ToString("M/d/yyyy")</div></div>
+    <div id="item-5"><div>&nbsp;</div><div style="font-weight:bold">ORIGINAL</div><div style="font-weight:bold;font-size:25px;">GS No. @randomNumber</div></div>
+    <div id="item-6" style="text-align:left"><div>&nbsp;</div><div></div>&nbsp;Agency:<p1 style="font-weight:bold;font-size:20px;">&nbsp;&nbsp; BSI-GSC</p1></div>
+    <div id="item-7"><div>&nbsp;</div><div>Fund</div></div>
+    <div id="item-8" style="text-align:left"><div>&nbsp;</div><div></div>&nbsp;Payor:&nbsp;&nbsp;<p1 style="font-weight:bold; font-size:20px">@xclearance.fullname</p1></div>
+    <div id="item-9"><div>NATURE OF</div><div>COLLECTION</div></div>
+    <div id="item-10"><div>ACCOUNT</div><div>CODE</div></div>
+    <div id="item-11"><div>&nbsp;</div><div>AMOUNT</div></div>
+    <div id="item-12" style="font-weight:bold;font-size:15px;"><div>&nbsp;</div><div></div>Brgy. Clearance</div>
+    <div id="item-13">&nbsp;</div>
+    <div id="item-14"><div>&nbsp;</div><div>₱120</div></div>
+    <div id="item-15">&nbsp;</div>
+    <div id="item-16">&nbsp;</div>
+    <div id="item-17">&nbsp;</div>
+    <div id="item-18">&nbsp;</div>
+    <div id="item-19">&nbsp;</div>
+    <div id="item-20">&nbsp;</div>
+    <div id="item-21">&nbsp;</div>
+    <div id="item-22">&nbsp;</div>
+    <div id="item-23">&nbsp;</div>
+    <div id="item-24">&nbsp;</div>
+    <div id="item-25">&nbsp;</div>
+    <div id="item-26">&nbsp;</div>
+    <div id="item-27"><div>&nbsp;</div><div style="font-weight:bold">Total</div></div>
+    <div id="item-28">&nbsp;</div>
+    <div id="item-29"><div>&nbsp;</div><div>₱120</div</div>
+    <div id="item-30" style="text-align:left"><div>&nbsp;</div><div>&nbsp;&nbsp;AMOUNT IN WORDS:</div></div>
+    <div id="item-31"><div>&nbsp;</div><div style="text-align:center;font-weight:bold;font-size:20px">One Hundred Twenty Pesos Only</div></div>
+    <div id="item-32" style="text-align:left"><br /><br /><div>&nbsp;<input type="checkbox" />&nbsp;Cash</div><div>&nbsp;<input type="checkbox" />&nbsp;Check</div>&nbsp;<input type="checkbox" />&nbsp;Money order</div>
+    <div id="item-33"><div>Drawee</div> <div>bank</div></div>
+    <div id="item-34"><br /><div>bank</div><div>&nbsp;</div></div>
+    <div id="item-35"><br /><div>Date</div><div>&nbsp;</div></div>
+    <div id="item-36">&nbsp;</div>
+    <div id="item-37">&nbsp;</div>
+    <div id="item-38">&nbsp;</div>
+    <div id="item-39">&nbsp;</div>
+    <div id="item-40">&nbsp;</div>
+    <div id="item-41">&nbsp;</div>
+    <div id="item-42" style="text-align:left"><br /><div>&nbsp;Recieved the amount stated above</div>
+     <div style="text-decoration:underline;text-align:right;padding-right:20px;">@_name</div>
+    <div style="text-align:right;">Collecting officer&nbsp;&nbsp;</div></div>
+    <div id="item-43"><div>Note: Write the number and date of this receipt  on the back of</div><div>check or money order recieved</div></div>
+</div>
+
+
+
+
+
+@code
+{
+    [Parameter] public string id { get; set; }
+    [Parameter] public clearance xclearance { get; set; } = new clearance();
+    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+    DateTime? date = DateTime.Now;
+    public string? _name;
+    private async Task Cancel()
+    {
+        mudDialog.Cancel();
+    }
+    [Inject] protected IJSRuntime IJS { get; set; }
+
+    public string randomNumber;
+
+    private async Task GenerateRandomNumber()
+    {
+        Random random = new Random();
+        int number = random.Next(10000000, 99999999); // Generate a random 8-digit number
+        char letter = (char)random.Next('A', 'Z' + 1); // Generate a random letter
+
+        randomNumber = number.ToString() + letter;
+    }
+    public async Task Name()
+    {
+        _name = await localStorage.GetItemAsStringAsync("name");
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Name();
+            await GenerateRandomNumber();
+            StateHasChanged();
+            await Task.Delay(500);
+            await IJS.InvokeVoidAsync("printPage");
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(NavigationManager.BaseUri);
+                string token = await localStorage.GetItemAsStringAsync("token");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                string apiUrl = "api/clearance/clearance";
+                HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+                response.EnsureSuccessStatusCode();
+
+                string responseBodyJson = await response.Content.ReadAsStringAsync();
+                var clr = JsonConvert.DeserializeObject<List<clearance>>(responseBodyJson);
+                xclearance = clr.Where(x => x.clearID == id).FirstOrDefault();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception
+        }
+    }
+
+}
+

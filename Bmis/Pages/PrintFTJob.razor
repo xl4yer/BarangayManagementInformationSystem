@@ -1,0 +1,823 @@
+﻿@page "/printftjob/{id}"
+@inject NavigationManager Nav
+@using Bmis.Models
+@layout LoginLayout
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService localStorage
+@using System.Net.Http.Headers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <img src="logo.png" class="logo" style="position:relative;  z-index: 1;" />
+    <img src="picture3.png" class="logo" style="position:relative;  z-index: 1;" />
+    <img src="Picture1.png" class="img" />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-11">
+                <div class="ink">Republic of the Philippines</div>
+                <div class="ink">City of General Santos</div>
+                <div class="tahoma">BARANGAY SAN ISIDRO</div>
+                <div>Tel. No.: (083) 887-5979; 887-5976</div>
+                <div style="text-decoration:underline">opb.sanisidro@gmail.com</div> <br />
+                <img src="Picture2.png" class="pic2" style="float:right" />
+            </div>
+            <div class="col-sm-1">
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <hr />
+
+    <div class="cert"> BARANGAY CERTIFICATION</div>
+    <div class="title">  (First Time Jobseekers Assistance Act – RA 11261)</div>
+
+    <div class="content">
+        <div class="con">
+            This is to certify that <p1 class="name">@xjob.fullname</p1>, Filipino citizen, of legal
+            age, a resident of,  Purok @xjob.purok, Barangay San Isidro, General
+            Santos City, is a qualified availee of RA 11261 or the <i><b>First Time Jobseekers</b></i>
+            <i><b>Act of 2019;</b></i>
+        </div>
+        <br /><br />
+        <div class="con">
+            I further certify that the holder/bearer was informed of his/her rights, including
+            the duties and responsibilities accorded by RA 11261 through the Oath of Undertaking
+            he/she has signed and executed in the presence of our Barangay Official.
+            <br /><br />
+            <div class="con">
+                Signed this @($"{xjob.date?.Day}{(xjob.date?.Day == 1 ? "st" : xjob.date?.Day == 2 ? "nd" : xjob.date?.Day == 3 ? "rd" : "th")} day of {xjob.date:MMMM}, {xjob.date?.Year}"), in the Barangay Hall of San Isidro, General
+                Santos City, Philippines.
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+
+
+    <div class="sig">
+        <img src="sig2.png" class="sig1" style="height:100px;" />
+        <br /><br /><br />
+        <div style="text-decoration:underline; font-weight:bold">HON. EDWARD FREDERICK J. YUMANG</div>
+        <div style="text-align:center">PUNONG BARANGAY</div>
+       @*  <div class="bot"> BARANGAY CERTIFICATION 2024</div> *@
+    </div>
+
+
+    <style>
+
+        body {
+            background-image: url('opacity.png');
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .bot {
+            padding-top: 100em;
+        }
+
+        .sig1 {
+            position: absolute;
+            padding-bottom: 1px;
+        }
+
+        .sig {
+            float: right;
+        }
+
+        .con {
+            text-indent: 20px;
+        }
+
+        .content {
+            font-size: 20px;
+            font-family: Tahoma;
+        }
+
+        .cert {
+            text-align: center;
+            font-family: Tahoma;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .logo {
+            height: 150px;
+            width: 150px;
+            float: right;
+        }
+
+        .img {
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+
+        .container {
+            position: absolute;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .ink {
+            font-family: 'Ink Free';
+            font-weight: bold;
+        }
+
+        .tahoma {
+            font-family: Tahoma;
+            letter-spacing: 2px;
+        }
+
+        .pic2 {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</body>
+</html>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+
+<body class="secondpage">
+    <img src="logo.png" class="logo" style="position:relative;  z-index: 1;" />
+    <img src="picture3.png" class="logo" style="position:relative;  z-index: 1;" />
+    <img src="Picture1.png" class="img2" />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-11">
+                <div class="ink">Republic of the Philippines</div>
+                <div class="ink">City of General Santos</div>
+                <div class="tahoma">BARANGAY SAN ISIDRO</div>
+                <div>Tel. No.: (083) 887-5979; 887-5976</div>
+                <div style="text-decoration:underline">opb.sanisidro@gmail.com</div> <br />
+                <img src="Picture2.png" class="pic2" style="float:right" />
+            </div>
+            <div class="col-sm-1">
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <hr />
+
+    <div class="cert"> OATH OF UNDERTAKING</div>
+
+    <div class="content1">
+        <div>
+            I, <p1 class="name">@xjob.fullname</p1>,@xjob.age years of age, resident @xjob.purok, Barangay San Isidro, General Santos City,
+            availing the benefits of Republic Act 11261, otherwise known as the First Time Jobseekers Act of 2019,
+            do hereby declare, agree and undertake to abide and be bound by the following:
+        </div> <br />
+        <div>1. That this is the first time that I will actively look for a job, and therefore requesting that a Barangay Certification be issued in my favor to avail the benefits of the law;</div>
+        <div>2. That I am aware that the benefit and privilege/s under the said law shall be valid only for one (1) year from the date that the Barangay Certification is issued;</div>
+        <div>3. That I can avail the benefits of the law only once;</div>
+        <div>4. That I understand that my personal information shall be included in the Roster/List of First Time Jobseekers and will not be used for any unlawful purpose;</div>
+        <div>5. That I will inform and/or report to the Barangay personally, through text or other means, or through my family/relatives once I get employed; and</div>
+        <div>6. That I am not a beneficiary of the Job Start Program under R.A No. 10869 and other laws that give similar exemptions for the documents or transactions exempted under R.A No. 11261</div>
+        <div>7. That if issued the requested Certification, I will not use the same in any fraud, neither falsify nor help and/or assist in the fabrication of the said certification.</div>
+        <div>8. That this undertaking is made solely for the purpose of obtaining a Barangay Certification consistent with the objective of R.A No. 11261 and not for other purposes.</div>
+        <div>9. That I consent to the use of my personal information pursuant to the Data Privacy Act and other applicable laws, rules, and regulations.</div>
+        <br />
+        <div>
+            Signed this  @($"{date?.Day}{(date?.Day == 1 ? "st" : date?.Day == 2 ? "nd" : date?.Day == 3 ? "rd" : "th")} day of {date:MMMM}, {date?.Year}"), in the Barangay Hall of San Isidro, General
+            Santos City.
+        </div>
+    </div>
+
+    <div class="sig">
+        <br /><br /><br />
+        <div class="fname">
+        <div class="name">@xjob.fullname</div>
+        <div style="text-align:center">First Time Job Seeker</div>
+        </div>
+       @*  <div class="bot2"> BARANGAY CERTIFICATION 2024</div> *@
+    </div>
+
+
+    <style>
+
+        .fname{
+            font-size:20px;
+        }
+
+        .name {
+            text-transform:uppercase;
+            font-weight:bold;
+            text-decoration: underline;
+            text-align:center;
+        }
+
+        body {
+            background-image: url('opacity.png');
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .bot {
+            padding-top: 400px;
+        }
+
+        .bot2 {
+            padding-top: 100px;
+        }
+
+        .sig1 {
+            position: absolute;
+            padding-bottom: 1px;
+        }
+
+        .sig {
+            float: right;
+        }
+
+        .con {
+            text-indent: 20px;
+        }
+
+        .content1 {
+            font-size: 17px;
+            font-family: Tahoma;
+        }
+
+        .cert {
+            text-align: center;
+            font-family: Tahoma;
+            font-size: 30px;
+            font-weight: bold;
+            text-decoration:underline;
+        }
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .logo {
+            height: 150px;
+            width: 150px;
+            float: right;
+        }
+
+        .img {
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+
+        .img2 {
+            position: absolute;
+            width: 100%;
+        }
+
+        .container {
+            position: absolute;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .ink {
+            font-family: 'Ink Free';
+            font-weight: bold;
+        }
+
+        .tahoma {
+            font-family: Tahoma;
+            letter-spacing: 2px;
+        }
+
+        .pic2 {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</body>
+
+
+<br /><br /><br /><br /><br /><br /><br /><br /><br />
+<style>
+    .angry-grid {
+        display: grid;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        gap: 0px;
+        height: 1000px;
+        text-align:center;
+   
+    }
+
+    #item-0 {
+       
+        grid-row-start: 1;
+        grid-column-start: 2;
+        grid-row-end: 2;
+        grid-column-end: 6;
+        display: flex;
+        border-style: 1px solid;
+    }
+
+
+    #item-3 {
+       border:1px solid;
+        grid-row-start: 2;
+        grid-column-start: 2;
+        grid-row-end: 3;
+        grid-column-end: 4;
+    }
+
+    #item-4 {
+        border: 1px solid;
+        grid-row-start: 3;
+        grid-column-start: 2;
+        grid-row-end: 4;
+        grid-column-end: 4;
+    }
+
+    #item-5 {
+        border: 1px solid;
+        grid-row-start: 2;
+        grid-column-start: 4;
+        grid-row-end: 4;
+        grid-column-end: 6;
+    }
+
+    #item-6 {
+        border: 1px solid;
+        grid-row-start: 4;
+        grid-column-start: 2;
+        grid-row-end: 5;
+        grid-column-end: 5;
+    }
+
+    #item-7 {
+        border: 1px solid;
+        grid-row-start: 4;
+        grid-column-start: 5;
+        grid-row-end: 5;
+        grid-column-end: 6;
+    }
+
+    #item-8 {
+        border: 1px solid;
+        grid-row-start: 5;
+        grid-column-start: 2;
+        grid-row-end: 6;
+        grid-column-end: 6;
+    }
+
+    #item-9 {
+        border: 1px solid;
+        grid-row-start: 6;
+        grid-column-start: 2;
+        grid-row-end: 7;
+        grid-column-end: 4;
+    }
+
+    #item-10 {
+        border: 1px solid;
+        grid-row-start: 6;
+        grid-column-start: 4;
+        grid-row-end: 7;
+        grid-column-end: 5;
+    }
+
+    #item-11 {
+        border: 1px solid;
+        grid-row-start: 6;
+        grid-column-start: 5;
+        grid-row-end: 7;
+        grid-column-end: 6;
+    }
+
+    #item-12 {
+        border: 1px solid;
+        grid-row-start: 7;
+        grid-column-start: 2;
+        grid-row-end: 8;
+        grid-column-end: 4;
+    }
+
+    #item-13 {
+        border: 1px solid;
+        grid-row-start: 7;
+        grid-column-start: 4;
+        grid-row-end: 8;
+        grid-column-end: 5;
+    }
+
+    #item-14 {
+        border: 1px solid;
+        grid-row-start: 7;
+        grid-column-start: 5;
+        grid-row-end: 8;
+        grid-column-end: 6;
+    }
+
+    #item-15 {
+        border: 1px solid;
+        grid-row-start: 8;
+        grid-column-start: 2;
+        grid-row-end: 9;
+        grid-column-end: 4;
+    }
+
+    #item-16 {
+        border: 1px solid;
+        grid-row-start: 8;
+        grid-column-start: 4;
+        grid-row-end: 9;
+        grid-column-end: 5;
+    }
+
+    #item-17 {
+        border: 1px solid;
+        grid-row-start: 8;
+        grid-column-start: 5;
+        grid-row-end: 9;
+        grid-column-end: 6;
+    }
+
+    #item-18 {
+        border: 1px solid;
+        grid-row-start: 9;
+        grid-column-start: 2;
+        grid-row-end: 10;
+        grid-column-end: 4;
+    }
+
+    #item-19 {
+        border: 1px solid;
+        grid-row-start: 9;
+        grid-column-start: 4;
+        grid-row-end: 10;
+        grid-column-end: 5;
+    }
+
+    #item-20 {
+        border: 1px solid;
+        grid-row-start: 9;
+        grid-column-start: 5;
+        grid-row-end: 10;
+        grid-column-end: 6;
+    }
+
+    #item-21 {
+        border: 1px solid;
+        grid-row-start: 10;
+        grid-column-start: 2;
+        grid-row-end: 11;
+        grid-column-end: 4;
+    }
+
+    #item-22 {
+        border: 1px solid;
+        grid-row-start: 10;
+        grid-column-start: 4;
+        grid-row-end: 11;
+        grid-column-end: 5;
+    }
+
+    #item-23 {
+        border: 1px solid;
+        grid-row-start: 10;
+        grid-column-start: 5;
+        grid-row-end: 11;
+        grid-column-end: 6;
+    }
+
+    #item-24 {
+        border: 1px solid;
+        grid-row-start: 11;
+        grid-column-start: 2;
+        grid-row-end: 12;
+        grid-column-end: 4;
+    }
+
+    #item-25 {
+        border: 1px solid;
+        grid-row-start: 11;
+        grid-column-start: 4;
+        grid-row-end: 12;
+        grid-column-end: 5;
+    }
+
+    #item-26 {
+        border: 1px solid;
+        grid-row-start: 11;
+        grid-column-start: 5;
+        grid-row-end: 12;
+        grid-column-end: 6;
+    }
+
+    #item-27 {
+        border: 1px solid;
+        grid-row-start: 12;
+        grid-column-start: 2;
+        grid-row-end: 13;
+        grid-column-end: 4;
+    }
+
+    #item-28 {
+        border: 1px solid;
+        grid-row-start: 12;
+        grid-column-start: 4;
+        grid-row-end: 13;
+        grid-column-end: 5;
+    }
+
+    #item-29 {
+        border: 1px solid;
+        grid-row-start: 12;
+        grid-column-start: 5;
+        grid-row-end: 13;
+        grid-column-end: 6;
+    }
+
+    #item-30 {
+        border: 1px solid;
+        grid-row-start: 13;
+        grid-column-start: 2;
+        grid-row-end: 14;
+        grid-column-end: 6;
+    }
+
+    #item-31 {
+        border: 1px solid;
+        grid-row-start: 14;
+        grid-column-start: 2;
+        grid-row-end: 15;
+        grid-column-end: 6;
+    }
+
+    #item-32 {
+        border: 1px solid;
+        grid-row-start: 15;
+        grid-column-start: 2;
+        grid-row-end: 18;
+        grid-column-end: 3;
+    }
+
+    #item-33 {
+        border: 1px solid;
+        grid-row-start: 15;
+        grid-column-start: 3;
+        grid-row-end: 16;
+        grid-column-end: 4;
+    }
+
+    #item-34 {
+        border: 1px solid;
+        grid-row-start: 15;
+        grid-column-start: 4;
+        grid-row-end: 16;
+        grid-column-end: 5;
+    }
+
+    #item-35 {
+        border: 1px solid;
+        grid-row-start: 15;
+        grid-column-start: 5;
+        grid-row-end: 16;
+        grid-column-end: 6;
+    }
+
+    #item-36 {
+        border: 1px solid;
+        grid-row-start: 16;
+        grid-column-start: 3;
+        grid-row-end: 17;
+        grid-column-end: 4;
+    }
+
+    #item-37 {
+        border: 1px solid;
+        grid-row-start: 16;
+        grid-column-start: 4;
+        grid-row-end: 17;
+        grid-column-end: 5;
+    }
+
+    #item-38 {
+        border: 1px solid;
+        grid-row-start: 16;
+        grid-column-start: 5;
+        grid-row-end: 17;
+        grid-column-end: 6;
+    }
+
+    #item-39 {
+        border: 1px solid;
+        grid-row-start: 17;
+        grid-column-start: 3;
+        grid-row-end: 18;
+        grid-column-end: 4;
+    }
+
+    #item-40 {
+        border: 1px solid;
+        grid-row-start: 17;
+        grid-column-start: 4;
+        grid-row-end: 18;
+        grid-column-end: 5;
+    }
+
+    #item-41 {
+        border: 1px solid;
+        grid-row-start: 17;
+        grid-column-start: 5;
+        grid-row-end: 18;
+        grid-column-end: 6;
+    }
+
+    #item-42 {
+        border: 1px solid;
+        grid-row-start: 18;
+        grid-column-start: 2;
+        grid-row-end: 20;
+        grid-column-end: 6;
+    }
+
+    #item-43 {
+        border: 1px solid;
+        grid-row-start: 20;
+        grid-column-start: 2;
+        grid-row-end: 21;
+        grid-column-end: 6;
+    }
+</style>
+
+<div class="angry-grid">
+    <div id="item-0" style="border:1px solid">
+        <img src="bw.png" width="100px" height="100px" class="left-image" style="margin-left:120px;">
+        <div class="text">
+            <br />
+            <div>Republic of the Philippines</div>
+            <div style="font-weight:bold">GENERAL SANTOS CITY</div>
+            <div>Office of the Treasurer</div>
+        </div>
+       @*  <img src="bw.png" width="100px" height="100px" class="right-image"> *@
+    </div>
+    <div id="item-3"><div>Accountable Form No.51</div><div>(Revised January 1992)</div></div>
+    <div id="item-4"><div>&nbsp;</div><div>Date: @date?.ToString("M/d/yyyy")</div></div>
+    <div id="item-5"><div>&nbsp;</div><div style="font-weight:bold">ORIGINAL</div><div style="font-weight:bold;font-size:25px;">GS No. @randomNumber</div></div>
+    <div id="item-6" style="text-align:left"><div>&nbsp;</div><div></div>&nbsp;Agency:<p1 style="font-weight:bold;font-size:20px;">&nbsp;&nbsp; BSI-GSC</p1></div>
+    <div id="item-7"><div>&nbsp;</div><div>Fund</div></div>
+    <div id="item-8" style="text-align:left"><div>&nbsp;</div><div></div>&nbsp;Payor:&nbsp;&nbsp;<p1 style="font-weight:bold; font-size:20px">@xjob.fullname</p1></div>
+    <div id="item-9"><div>NATURE OF</div><div>COLLECTION</div></div>
+    <div id="item-10"><div>ACCOUNT</div><div>CODE</div></div>
+    <div id="item-11"><div>&nbsp;</div><div>AMOUNT</div></div>
+    <div id="item-12" style="font-weight:bold;font-size:15px;"><div>&nbsp;</div><div></div>First Time Job</div>
+    <div id="item-13">&nbsp;</div>
+    <div id="item-14"><div>&nbsp;</div><div>₱80</div></div>
+    <div id="item-15">&nbsp;</div>
+    <div id="item-16">&nbsp;</div>
+    <div id="item-17">&nbsp;</div>
+    <div id="item-18">&nbsp;</div>
+    <div id="item-19">&nbsp;</div>
+    <div id="item-20">&nbsp;</div>
+    <div id="item-21">&nbsp;</div>
+    <div id="item-22">&nbsp;</div>
+    <div id="item-23">&nbsp;</div>
+    <div id="item-24">&nbsp;</div>
+    <div id="item-25">&nbsp;</div>
+    <div id="item-26">&nbsp;</div>
+    <div id="item-27"><div>&nbsp;</div><div style="font-weight:bold">Total</div></div>
+    <div id="item-28">&nbsp;</div>
+    <div id="item-29"><div>&nbsp;</div><div>₱80</div</div>
+    <div id="item-30" style="text-align:left"><div>&nbsp;</div><div>&nbsp;&nbsp;AMOUNT IN WORDS:</div></div>
+    <div id="item-31"><div>&nbsp;</div><div style="text-align:center;font-weight:bold;font-size:20px">Eighty Pesos Only</div></div>
+    <div id="item-32" style="text-align:left"><br /><br /><div>&nbsp;<input type="checkbox" />&nbsp;Cash</div><div>&nbsp;<input type="checkbox" />&nbsp;Check</div>&nbsp;<input type="checkbox" />&nbsp;Money order</div>
+    <div id="item-33"><div>Drawee</div> <div>bank</div></div>
+    <div id="item-34"><br /><div>bank</div><div>&nbsp;</div></div>
+    <div id="item-35"><br /><div>Date</div><div>&nbsp;</div></div>
+    <div id="item-36">&nbsp;</div>
+    <div id="item-37">&nbsp;</div>
+    <div id="item-38">&nbsp;</div>
+    <div id="item-39">&nbsp;</div>
+    <div id="item-40">&nbsp;</div>
+    <div id="item-41">&nbsp;</div>
+    <div id="item-42" style="text-align:left"><br /><div>&nbsp;Recieved the amount stated above</div>
+    <div style="text-decoration:underline;text-align:right;padding-right:20px;">@_xname</div>
+    <div style="text-align:right;">Collecting officer&nbsp;&nbsp;</div></div>
+    <div id="item-43"><div>Note: Write the number and date of this receipt  on the back of</div><div>check or money order recieved</div></div>
+</div>
+
+
+
+
+@code
+{
+    [Parameter] public string id { get; set; }
+    [Parameter] public ftjob xjob { get; set; } = new ftjob();
+    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+    private DateTime? date = DateTime.Now;
+    public string _xname = "";
+    private async Task Cancel()
+    {
+        mudDialog.Cancel();
+    }
+    private string randomNumber;
+
+    private async void GenerateRandomNumber()
+    {
+
+        Random random = new Random();
+        int number = random.Next(10000000, 99999999); // Generate a random 8-digit number
+        char letter = (char)random.Next('A', 'Z' + 1); // Generate a random letter
+
+        randomNumber = number.ToString() + letter;
+    }
+
+    [Inject] protected IJSRuntime IJS { get; set; }
+    public async Task Name()
+    {
+        _xname = await localStorage.GetItemAsStringAsync("name");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Name();
+            GenerateRandomNumber();
+            StateHasChanged();
+            await Task.Delay(1000);
+            await IJS.InvokeVoidAsync("printPage");
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+       
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(NavigationManager.BaseUri);
+                string token = await localStorage.GetItemAsStringAsync("token");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                string apiUrl = "api/ftjob/ftjob";
+                HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+                response.EnsureSuccessStatusCode();
+
+                string responseBodyJson = await response.Content.ReadAsStringAsync();
+                var clr = JsonConvert.DeserializeObject<List<ftjob>>(responseBodyJson);
+                xjob = clr.Where(x => x.ftjobID == id).FirstOrDefault();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception
+        }
+    }
+
+}
+

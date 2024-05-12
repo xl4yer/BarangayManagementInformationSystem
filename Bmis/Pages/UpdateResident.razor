@@ -1,0 +1,129 @@
+﻿@using Bmis.Models
+@inject ISnackbar Snackbar
+@using System.Net.Http.Headers
+@inject ILocalStorageService localStorage
+@inject NavigationManager Nav
+
+<MudDialog TitleClass="mud-primary" DisableSidePadding="true">
+    <TitleContent>
+        <MudText Typo="Typo.h6" Style="color:white">
+           Update Resident Information
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudContainer Style="max-height: 500px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p1>*Household No.</p1>
+                        <MudTextField Clearable @bind-Value="@xres.houseID" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField><br />
+                         <p1>*First Name</p1>
+                         <MudTextField Clearable @bind-Value="@xres.fname" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField><br />
+                         <p1>*Middle Name</p1>
+                         <MudTextField Clearable @bind-Value="@xres.mname" HelperText="Leave blank if Not Applicable" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                         <p1>*Last Name</p1>
+                         <MudTextField Clearable @bind-Value="@xres.lname" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField><br />
+                         <p1>*Extension</p1>
+                         <MudTextField Clearable @bind-Value="@xres.ext" HelperText="Leave blank if Not Applicable" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                     </div>
+                     <div class="col-sm-6">
+                         <p1>*Purok</p1>
+                         <MudTextField Clearable @bind-Value="@xres.purok" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField><br />
+                         <p1>*Gender</p1>
+                         <MudSelect @bind-Value="@xres.gender" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                             <MudSelectItem Value="@("Male")" />
+                             <MudSelectItem Value="@("Female")" />
+                         </MudSelect><br />
+                         <p1>*Birthdate</p1>
+                         <MudDatePicker Editable="true" Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Date="birthdate" Placeholder="Select Date"/><br />
+                         <p1>*Marital Status</p1>
+                         <MudSelect @bind-Value="@xres.status" Margin="Margin.Dense" T="string" Variant="Variant.Outlined">
+                             <MudSelectItem Value="@("Single")" />
+                             <MudSelectItem Value="@("Married")" />
+                             <MudSelectItem Value="@("Separated")" />
+                             <MudSelectItem Value="@("Widowed")" />
+                         </MudSelect><br />
+                         <p1>*Contact No.</p1>
+                         <MudTextField Clearable @bind-Value="@xres.contact" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                     </div>
+                 </div>
+             </div>
+         </MudContainer>
+     </DialogContent>
+     <DialogActions>
+         <MudButton OnClick="Cancel">Cancel</MudButton>
+         <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="Submit">Update</MudButton>
+     </DialogActions>
+ </MudDialog>
+
+ @code {
+
+    [Parameter] public residents xres { get; set; } = new residents();
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    DateTime? birthdate = DateTime.Today;
+
+    public async Task Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private async Task Submit()
+    {
+        int i = 0;
+        try
+        {
+            var res = new residents
+                {
+                    houseID = xres.houseID,
+                    resID = xres.resID,
+                    fname = xres.fname,
+                    mname = xres.mname,
+                    lname = xres.lname,
+                    ext = xres.ext,
+                    gender = xres.gender,
+                    bdate = xres.bdate,
+                    status = xres.status,
+                    contact = xres.contact,
+                    purok = xres.purok
+                };
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"{Nav.BaseUri}");
+                var json = JsonConvert.SerializeObject(res);
+                HttpContent content = new StringContent(json);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                await localStorage.GetItemAsStringAsync("token"));
+                HttpResponseMessage response = await client.PutAsync($"api/Resident/UpdateResident", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    string contentresponse = await response.Content.ReadAsStringAsync();
+                    i = JsonConvert.DeserializeObject<int>(contentresponse);
+                    if (i > 0)
+                    {
+                        await InvokeAsync(async () =>
+                        {
+                            Snackbar.Add($"Done: Successfully Updated!", Severity.Success);
+                            MudDialog.Cancel();
+                            await InvokeAsync(StateHasChanged);
+                        });
+                    }
+                }
+                else
+                {
+                    await InvokeAsync(() =>
+                    {
+                        Snackbar.Add($"Warning: {response.ReasonPhrase}", Severity.Warning);
+                        StateHasChanged();
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+}
+

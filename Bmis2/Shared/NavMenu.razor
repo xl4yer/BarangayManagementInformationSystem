@@ -1,0 +1,83 @@
+﻿@inject ILocalStorageService localStorage
+@inject NavigationManager Nav
+
+<div class="top-row ps-3 navbar navbar-dark mobile-mode">
+    <div class="container-fluid">
+        <a class="navbar-brand" href=""></a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<style>
+    @@media (max-width: 767px) {
+        .mobile-mode {
+            display: block;
+        }
+    }
+
+    @@media (min-width: 768px) {
+        .mobile-mode {
+            display: none;
+        }
+    }
+</style>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <center>  
+                <MudAvatar Size="Size.Large">
+                    <MudImage  Src="avatar.png"></MudImage>
+                </MudAvatar>
+            </center>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="@($"profile/{resID}")">
+                <span class="oi oi-person" aria-hidden="true"></span> Profile
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="clearance">
+                <span class="oi oi-document" aria-hidden="true"></span> Clearance
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="ftjob">
+                <span class="oi oi-document" aria-hidden="true"></span> First Time Job
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="Logout">
+                <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+            </NavLink>
+        </div>
+
+    </nav>
+</div>
+
+@code {
+
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    string resID { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        resID = await localStorage.GetItemAsStringAsync("resID");
+    }
+
+    async Task Logout()
+    {
+        await localStorage.RemoveItemAsync("token");
+        await localStorage.RemoveItemAsync("resID");
+        Nav.NavigateTo("/");
+    }
+}

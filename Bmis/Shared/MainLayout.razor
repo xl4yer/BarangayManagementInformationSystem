@@ -1,0 +1,248 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@inject IJSRuntime IJS
+<PageTitle>Bmis</PageTitle>
+
+<MudThemeProvider />
+<MudDialogProvider FullWidth="true"
+                   CloseButton="true"
+                   MaxWidth="MaxWidth.Small"
+                   Position="DialogPosition.TopCenter" />
+<MudSnackbarProvider />
+
+<div class="page">
+    <main>
+        @if (role == "Clerk")
+        {
+            <nav class="navbar navbar-expand-custom navbar-mainbg">
+                <a class="navbar-brand navbar-logo" href="#">Brgy. San Isidro</a>
+                <button class="navbar-toggler" type="button" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars text-white"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <div class="hori-selector"><div class="left"></div><div class="right"></div></div>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Clearance"><i class="far fa-copy"></i>Clearance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="FtJob"><i class="far fa-copy"></i>First Time Job</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Settings"><i class="fas fa-cogs"></i>Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Logout"><i class="fas fa-sign-out-alt"></i>Log out</a>
+                        </li>
+                    </ul>
+                </div>
+                <script>
+                    function test() {
+                        var tabsNewAnim = $('#navbarSupportedContent');
+                        var selectorNewAnim = $('#navbarSupportedContent').find('li').length;
+                        var activeItemNewAnim = tabsNewAnim.find('.active');
+                        var activeWidthNewAnimHeight = activeItemNewAnim.innerHeight();
+                        var activeWidthNewAnimWidth = activeItemNewAnim.innerWidth();
+                        var itemPosNewAnimTop = activeItemNewAnim.position();
+                        var itemPosNewAnimLeft = activeItemNewAnim.position();
+                        $(".hori-selector").css({
+                            "top": itemPosNewAnimTop.top + "px",
+                            "left": itemPosNewAnimLeft.left + "px",
+                            "height": activeWidthNewAnimHeight + "px",
+                            "width": activeWidthNewAnimWidth + "px"
+                        });
+                        $("#navbarSupportedContent").on("click", "li", function (e) {
+                            $('#navbarSupportedContent ul li').removeClass("active");
+                            $(this).addClass('active');
+                            var activeWidthNewAnimHeight = $(this).innerHeight();
+                            var activeWidthNewAnimWidth = $(this).innerWidth();
+                            var itemPosNewAnimTop = $(this).position();
+                            var itemPosNewAnimLeft = $(this).position();
+                            $(".hori-selector").css({
+                                "top": itemPosNewAnimTop.top + "px",
+                                "left": itemPosNewAnimLeft.left + "px",
+                                "height": activeWidthNewAnimHeight + "px",
+                                "width": activeWidthNewAnimWidth + "px"
+                            });
+                        });
+                    }
+                    $(document).ready(function () {
+                        setTimeout(function () { test(); });
+                    });
+                    $(window).on('resize', function () {
+                        setTimeout(function () { test(); }, 500);
+                    });
+                    $(".navbar-toggler").click(function () {
+                        $(".navbar-collapse").slideToggle(300);
+                        setTimeout(function () { test(); });
+                    });
+                    jQuery(document).ready(function ($) {
+                        var path = window.location.pathname.split("/").pop();
+                        if (path == '') {
+                            path = 'index.html';
+                        }
+
+                        var target = $('#navbarSupportedContent ul li a[href="' + path + '"]');
+                        target.parent().addClass('active');
+                    });
+                </script>
+            </nav>
+        }
+
+        else
+        {
+            <nav class="navbar navbar-expand-custom navbar-mainbg">
+                <a class="navbar-brand navbar-logo" href="#">Brgy. San Isidro</a>
+                <button class="navbar-toggler" type="button" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars text-white"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <div class="hori-selector"><div class="left"></div><div class="right"></div></div>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Household"><i class="fas fa-home"></i>Household</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Residents"><i class="fas fa-users"></i>Residents</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Clearance"><i class="far fa-copy"></i>Clearance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="FtJob"><i class="far fa-copy"></i>First Time Job</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Settings"><i class="fas fa-cogs"></i>Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" @onclick="Logout"><i class="fas fa-sign-out-alt"></i>Log out</a>
+                        </li>
+                    </ul>
+                </div>
+                <script>
+                    function test() {
+                        var tabsNewAnim = $('#navbarSupportedContent');
+                        var selectorNewAnim = $('#navbarSupportedContent').find('li').length;
+                        var activeItemNewAnim = tabsNewAnim.find('.active');
+                        var activeWidthNewAnimHeight = activeItemNewAnim.innerHeight();
+                        var activeWidthNewAnimWidth = activeItemNewAnim.innerWidth();
+                        var itemPosNewAnimTop = activeItemNewAnim.position();
+                        var itemPosNewAnimLeft = activeItemNewAnim.position();
+                        $(".hori-selector").css({
+                            "top": itemPosNewAnimTop.top + "px",
+                            "left": itemPosNewAnimLeft.left + "px",
+                            "height": activeWidthNewAnimHeight + "px",
+                            "width": activeWidthNewAnimWidth + "px"
+                        });
+                        $("#navbarSupportedContent").on("click", "li", function (e) {
+                            $('#navbarSupportedContent ul li').removeClass("active");
+                            $(this).addClass('active');
+                            var activeWidthNewAnimHeight = $(this).innerHeight();
+                            var activeWidthNewAnimWidth = $(this).innerWidth();
+                            var itemPosNewAnimTop = $(this).position();
+                            var itemPosNewAnimLeft = $(this).position();
+                            $(".hori-selector").css({
+                                "top": itemPosNewAnimTop.top + "px",
+                                "left": itemPosNewAnimLeft.left + "px",
+                                "height": activeWidthNewAnimHeight + "px",
+                                "width": activeWidthNewAnimWidth + "px"
+                            });
+                        });
+                    }
+                    $(document).ready(function () {
+                        setTimeout(function () { test(); });
+                    });
+                    $(window).on('resize', function () {
+                        setTimeout(function () { test(); }, 500);
+                    });
+                    $(".navbar-toggler").click(function () {
+                        $(".navbar-collapse").slideToggle(300);
+                        setTimeout(function () { test(); });
+                    });
+                    jQuery(document).ready(function ($) {
+                        var path = window.location.pathname.split("/").pop();
+                        if (path == '') {
+                            path = 'index.html';
+                        }
+
+                        var target = $('#navbarSupportedContent ul li a[href="' + path + '"]');
+                        target.parent().addClass('active');
+                    });
+                </script>
+            </nav>
+
+        }
+       
+       
+        <article class="content px-4">
+            <br />
+            @Body
+        </article>
+    </main>
+</div>
+<style>
+    body {
+        background-image: url('opacity.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        background-size: cover;
+    }
+</style>
+@code {
+    string role = "";
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            role = await localStorage.GetItemAsStringAsync("role");
+            StateHasChanged();
+        }
+    }
+
+    private async Task Logout()
+    {
+      
+        StateHasChanged();
+        await localStorage.RemoveItemAsync("token");
+        await localStorage.RemoveItemAsync("role");
+        await localStorage.RemoveItemAsync("userID");
+        await localStorage.RemoveItemAsync("name");
+        Nav.NavigateTo("/");
+       
+    }
+
+    void Dashboard()
+    {
+        Nav.NavigateTo("/dashboard");
+    }
+
+    void Household()
+    {
+        Nav.NavigateTo("/household");
+    }
+    void Residents()
+    {
+        Nav.NavigateTo("/residents");
+    }
+
+    void Clearance()
+    {
+        Nav.NavigateTo("/clearance");
+    }
+    void FtJob()
+    {
+        Nav.NavigateTo("/ftjob");
+    }
+    void Settings()
+    {
+        Nav.NavigateTo("/settings");
+    }
+}

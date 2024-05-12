@@ -1,0 +1,151 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Bmis
+build_property.RootNamespace = Bmis
+build_property.ProjectDir = C:\Users\Xlayer\Documents\dumps\Bmis\Bmis\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\Xlayer\Documents\dumps\Bmis\Bmis
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/AddClearance.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRkQ2xlYXJhbmNlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/AddHousehold.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRkSG91c2Vob2xkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/AddResident.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRkUmVzaWRlbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/Clearance.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xlYXJhbmNlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/ClearanceStatus.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xlYXJhbmNlU3RhdHVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/Dashboard.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFzaGJvYXJkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/DeleteUsers.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVsZXRlVXNlcnMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/FtJob.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRnRKb2IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/Household.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSG91c2Vob2xkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/PClearance.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUENsZWFyYW5jZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/PFtJob.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUEZ0Sm9iLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/PrintClearance.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpbnRDbGVhcmFuY2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/PrintFTJob.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpbnRGVEpvYi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/Settings.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2V0dGluZ3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/UpdateClearance.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXBkYXRlQ2xlYXJhbmNlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/UpdateClearanceStatus.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXBkYXRlQ2xlYXJhbmNlU3RhdHVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/UpdateftJob.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXBkYXRlZnRKb2IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/UpdateHousehold.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXBkYXRlSG91c2Vob2xkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/UpdateJobStatus.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXBkYXRlSm9iU3RhdHVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/UpdateResident.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXBkYXRlUmVzaWRlbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/UpdateUsers.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXBkYXRlVXNlcnMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/ViewHousehold.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmlld0hvdXNlaG9sZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Shared/Error404.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEVycm9yNDA0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Shared/LoginLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExvZ2luTGF5b3V0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Shared/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-3qsulzxznf
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/Residents.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVzaWRlbnRzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-tlvliueo0v
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-vhpb58tmcf
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-w5x7e913pt
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Xlayer/Documents/dumps/Bmis/Bmis/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 

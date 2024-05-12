@@ -1,0 +1,193 @@
+﻿@page "/"
+@layout LoginLayout
+@inject NavigationManager Nav
+@inject ILocalStorageService localStorage
+@using Bmis2.Models
+@inject ISnackbar SnackBar
+@inject SweetAlertService Swal
+
+<PageTitle>Bmis</PageTitle>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="login-page">
+        <div class="form">    
+            <form class="login-form" method="post">
+                <h2><i class="fas fa-lock"></i>Login</h2>
+                <input type="email" oninvalid="this.setCustomValidity(' ')" placeholder="Username" required @bind-value="username" />
+                <input type="password" placeholder="Password" required @bind-value="password"/>
+                <button type="submit" name="send2" @onclick="Login">login</button>
+                <p class="message"><a href="/forgot-password">Forgot Password</a> <span>|</span> <a href="/registration">Create an account</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $('.message a').click(function () {
+            $('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
+        });
+    </script>
+</body>
+</html>
+
+
+@code{
+    private string username = "";
+    private string password = "";
+    List<residents> xres;
+    string? resid;
+    private async Task Login()
+    {
+        xres = new List<residents>();
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"https://localhost:7242/");
+                HttpResponseMessage json = await client.GetAsync($"api/Resident/Login?user={username}&pwd={password}");
+                if (json.IsSuccessStatusCode)
+                {
+                    string content = await json.Content.ReadAsStringAsync();
+                    List<residents> code = JsonConvert.DeserializeObject<List<residents>>(content);
+
+                    if (code.Count > 0)
+                    {
+                        xres.Add(new residents()
+                            {
+                                resID = code[0].resID,
+                                token = code[0].token,
+                                username = code[0].username,
+                                fullname = code[0].fullname
+                            });
+
+                        await localStorage.SetItemAsStringAsync("token", xres[0].token);
+                        await localStorage.SetItemAsStringAsync("resID", xres[0].resID.ToString());
+                        await localStorage.SetItemAsStringAsync("fullname", xres[0].fullname);
+                        Nav.NavigateTo($"/profile/{xres[0].resID}");
+                    }
+                    else
+                    {
+                        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Title = "Invalid Username or Password",
+                                Icon = SweetAlertIcon.Warning,
+                            });
+                    }
+                }
+                else
+                {
+                    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Title = "Invalid Username or Password",
+                            Icon = SweetAlertIcon.Warning,
+                        });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //
+        }
+    }
+   
+}
+
+<style>
+    body {
+        height: 100vh;
+        overflow: hidden;
+        font-family: "Poppins";
+        background-image: url('opacity.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        display:flex; 
+        align-items:center; 
+        justify-content:center;
+    }
+
+    .login-page {
+        width: 400px;
+        padding: 8% 0 0;
+        margin: auto;
+    }
+
+    .form {
+        position: relative;
+        z-index: 1;
+        background: #FFFFFF;
+        max-width: 400px;
+        margin: 0 auto 100px;
+        padding: 45px;
+        text-align: center;
+        border-radius: 15px;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    }
+
+        .form input {
+            font-family: "Poppins", sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: 100%;
+            border: 0;
+            border-radius: 7px;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form button {
+            font-family: "Poppins", sans-serif;
+            text-transform: uppercase;
+            outline: 0;
+            background: #234666;
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            color: #FFFFFF;
+            border-radius: 7px;
+            font-size: 14px;
+            -webkit-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+            .form button:hover, .form button:active, .form button:focus {
+                background: #0e2941;
+            }
+
+        .form .message {
+            margin: 15px 0 0;
+            color: #b3b3b3;
+            font-size: 12px;
+        }
+
+            .form .message a {
+                color: #234666;
+                text-decoration: none;
+            }
+
+        .form .register-form {
+            display: none;
+        }
+
+    /* Media Queries */
+    @@media only screen and (max-width: 600px) {
+        .login-page {
+            width: 80%;
+        }
+    }
+
+    @@media only screen and (max-width: 400px) {
+        .login-page {
+            width: 90%;
+        }
+    }
+</style>
